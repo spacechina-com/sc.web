@@ -104,7 +104,7 @@
     <!-- 中部结束 -->
     <!-- 底部开始 -->
     <div class="footer">
-        <div class="copyright">Copyright ©2017 ${SYSTEM_NAME} All Rights Reserved</div>  
+        <div class="copyright">Copyright ©2019 ${SYSTEM_NAME} All Rights Reserved</div>  
     </div>
     <!-- 底部结束 -->
     <script type="text/javascript">

@@ -47,7 +47,7 @@ public class CommonFilter implements Filter {
 
 			Pd pdu = new Pd();
 			pdu.put("USER_ID", userID);
-			pdu = rest.post(IConstants.SC_SERVICE_KEY, "user/find", pdu, Pd.class);
+			pdu = rest.post(IConstants.SC_SERVICE_KEY, "common/user/find", pdu, Pd.class);
 			pdu.put("ROLE_ID", "1");
 
 			request.getSession().setAttribute(IConstants.USER_SESSION, pdu);
