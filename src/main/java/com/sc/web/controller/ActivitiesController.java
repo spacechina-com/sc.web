@@ -2,11 +2,13 @@ package com.sc.web.controller;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,10 +26,10 @@ import com.sc.web.config.FileConfig;
 import com.sc.web.util.RestTemplateUtil;
 
 @Controller
-@RequestMapping("prizeitems")
-public class PrizeitemsController extends BaseController {
+@RequestMapping("activities")
+public class ActivitiesController extends BaseController {
 
-	private Logger logger = LoggerFactory.getLogger(PrizeitemsController.class);
+	private Logger logger = LoggerFactory.getLogger(ActivitiesController.class);
 
 	@Autowired
 	RestTemplateUtil rest;
@@ -69,15 +71,15 @@ public class PrizeitemsController extends BaseController {
 				File fileNew = new File(fileConfig.getDirImage() + File.separator + tempName);
 				file.transferTo(fileNew);
 
-				pd.put("IMAGE_PATH", tempName);
+				pd.put("BACK_PATH", tempName);
 			}
 		}
 
-		rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/save", pd, Pd.class);
+		rest.post(IConstants.SC_SERVICE_KEY, "activities/save", pd, Pd.class);
 
-		mv.addObject("msg", getMessageUrl("MSG_CODE_ADD_SUCCESS", new Object[] { "奖品池" }, ""));
-		mv.setViewName("redirect:/prizeitems/listPage");
-		logger.info("新增奖品池成功");
+		mv.addObject("msg", getMessageUrl("MSG_CODE_ADD_SUCCESS", new Object[] { "抽奖活动" }, ""));
+		mv.setViewName("redirect:/activities/listPage");
+		logger.info("新增抽奖活动成功");
 		return mv;
 	}
 
@@ -90,16 +92,16 @@ public class PrizeitemsController extends BaseController {
 	 */
 	@RequestMapping(value = "/delete")
 	@ResponseBody
-	public ModelAndView delete(@RequestParam String PRIZEITEMS_ID) throws Exception {
+	public ModelAndView delete(@RequestParam String ACTIVITIES_ID) throws Exception {
 		ModelAndView mv = this.getModelAndView();
 		Pd pd = new Pd();
-		pd.put("PRIZEITEMS_ID", PRIZEITEMS_ID);
+		pd.put("ACTIVITIES_ID", ACTIVITIES_ID);
 
-		rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/delete", pd, Pd.class);
+		rest.post(IConstants.SC_SERVICE_KEY, "activities/delete", pd, Pd.class);
 
-		mv.addObject("msg", getMessageUrl("MSG_CODE_DELETE_SUCCESS", new Object[] { "奖品池" }, ""));
-		mv.setViewName("redirect:/prizeitems/listPage");
-		logger.info("删除奖品池成功");
+		mv.addObject("msg", getMessageUrl("MSG_CODE_DELETE_SUCCESS", new Object[] { "抽奖活动" }, ""));
+		mv.setViewName("redirect:/activities/listPage");
+		logger.info("删除抽奖活动成功");
 
 		return mv;
 	}
@@ -132,21 +134,28 @@ public class PrizeitemsController extends BaseController {
 				File fileNew = new File(fileConfig.getDirImage() + File.separator + tempName);
 				file.transferTo(fileNew);
 
-				pd.put("IMAGE_PATH", tempName);
+				pd.put("BACK_PATH", tempName);
 			}
 		}
 
-		rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/edit", pd, Pd.class);
+		rest.post(IConstants.SC_SERVICE_KEY, "activities/edit", pd, Pd.class);
 
-		mv.addObject("msg", getMessageUrl("MSG_CODE_EDIT_SUCCESS", new Object[] { "奖品池" }, ""));
-		mv.setViewName("redirect:/prizeitems/listPage");
-		logger.info("修改奖品池成功");
+		mv.addObject("msg", getMessageUrl("MSG_CODE_EDIT_SUCCESS", new Object[] { "抽奖活动" }, ""));
+		mv.setViewName("redirect:/activities/listPage");
+		logger.info("修改抽奖活动成功");
 		return mv;
 	}
 
 	@RequestMapping("listPage")
 	public ModelAndView listPage() throws Exception {
 		ModelAndView mv = this.getModelAndView();
+
+		Pd pdt = new Pd();
+		List<Pd> modalitiesData = rest.postForList(IConstants.SC_SERVICE_KEY, "modalities/listAll", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("modalitiesData", modalitiesData);
+
 		Pd pd = new Pd();
 		pd = this.getPd();
 		String keywords = pd.getString("keywords"); // 检索条件
@@ -158,12 +167,12 @@ public class PrizeitemsController extends BaseController {
 
 		pd.put("COMPANY_ID", user.getString("COMPANY_ID"));
 
-		Page page = rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/listPage", pd, Page.class);
+		Page page = rest.post(IConstants.SC_SERVICE_KEY, "activities/listPage", pd, Page.class);
 
-		mv.setViewName("/prizeitems/list");
+		mv.setViewName("/activities/list");
 		mv.addObject("page", page);
 		mv.addObject("pd", pd);
-		logger.info("分页查询奖品池信息");
+		logger.info("分页查询抽奖活动信息");
 		return mv;
 	}
 
@@ -179,8 +188,23 @@ public class PrizeitemsController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
+		Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
+
+		Pd pdt = new Pd();
+		List<Pd> modalitiesData = rest.postForList(IConstants.SC_SERVICE_KEY, "modalities/listAll", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("modalitiesData", modalitiesData);
+
+		Pd pdml = new Pd();
+		pdml.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> goodsData = rest.postForList(IConstants.SC_SERVICE_KEY, "common/listAllGoods", pdml,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("goodsData", goodsData);
+
 		mv.addObject("pd", pd);
-		mv.setViewName("prizeitems/add");
+		mv.setViewName("activities/add");
 		return mv;
 	}
 
@@ -196,10 +220,10 @@ public class PrizeitemsController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
-		pd = rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/find", pd, Pd.class);
+		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
 
-		mv.setViewName("prizeitems/edit");
+		mv.setViewName("activities/edit");
 		return mv;
 	}
 
@@ -209,10 +233,10 @@ public class PrizeitemsController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
-		pd = rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/find", pd, Pd.class);
+		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
 
-		mv.setViewName("prizeitems/info");
+		mv.setViewName("activities/info");
 		return mv;
 	}
 }

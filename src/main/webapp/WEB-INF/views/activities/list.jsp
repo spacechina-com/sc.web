@@ -23,46 +23,56 @@
   <body>
     <div class="x-nav">
       <span class="layui-breadcrumb">
-        <a href="">奖品池管理</a>
+        <a href="">抽奖池管理</a>
         <a>
           <cite>列表查询</cite></a>
       </span>
     </div>
     <div class="x-body">
-    <form class="layui-form layui-col-md12 x-so" method="post" action="<%=request.getContextPath()%>/prizeitems/listPage">
+    <form class="layui-form layui-col-md12 x-so" method="post" action="<%=request.getContextPath()%>/activities/listPage">
       <div class="layui-row">
           <input type="text" name="keywords"  placeholder="请输入关键字" autocomplete="off" class="layui-input" value="${page.pd.keywords}">
+          <div class="layui-input-inline">
+          <select id="MODALITIES_ID" name="MODALITIES_ID" class="valid">
+          	<option value="">所属类型</option>
+            <c:forEach var="ml" items="${modalitiesData}">
+            	<option value="${ml.MODALITIES_ID}" <c:if test="${ml.MODALITIES_ID eq page.pd.MODALITIES_ID}">selected="selected"</c:if>>${ml.DESCRIPTION}</option>
+            </c:forEach>
+          </select>
+          </div>        
           <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         
       </div>
       <xblock>
-        <a class="layui-btn" onclick="commonSave('<%=request.getContextPath()%>/prizeitems/goAdd')" href="javascript:;"><i class="layui-icon"></i>添加</a>
+        <a class="layui-btn" onclick="commonSave('<%=request.getContextPath()%>/activities/goAdd')" href="javascript:;"><i class="layui-icon"></i>添加</a>
       </xblock>
       <table class="layui-table x-admin">
         <thead>
           <tr>
-            <th>奖品图片</th>
+            <th>背景图片</th>
+            <th>主题</th>
             <th>描述</th>
-            <th>等值</th>
-            <th>创建时间</th>
+            <th>分类</th>
+            <th>开始 / 结束时间</th>
             <th>操作</th>
             </tr>
         </thead>
         <tbody>
           <c:forEach var="var" items="${page.data}">
           	<tr>
-           	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.IMAGE_PATH}" alt="图片" width="100"/></td>
+           	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.BACK_PATH}" alt="图片" width="100"/></td>
+            <td>${var.TOPIC}</td>
             <td>${var.DESCRIPTION}</td>
-            <td>${var.SAMEMONEY}</td>
-            <td>${var.CREATE_TIME}</td>
+            <td>${var.MDESCRIPTION}</td>
+            <td>${var.START_TIME} / ${var.END_TIME}</td>
             <td class="td-manage">
-              <a title="编辑"  onclick="commonEdit('<%=request.getContextPath()%>/prizeitems/goEdit?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}')" href="javascript:;">
+              <a title="编辑"  onclick="commonEdit('<%=request.getContextPath()%>/activities/goEdit?ACTIVITIES_ID=${var.ACTIVITIES_ID}')" href="javascript:;">
                 <i class="layui-icon">&#xe642;</i>
               </a>
-          	   <a title="删除" onclick="commonDelete('<%=request.getContextPath()%>/prizeitems/delete?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}');" href="javascript:;">
+          	   <a title="删除" onclick="commonDelete('<%=request.getContextPath()%>/activities/delete?ACTIVITIES_ID=${var.ACTIVITIES_ID}');" href="javascript:;">
                  <i class="layui-icon">&#xe640;</i>
                </a>
-               <a title="查看" onclick="commonInfo('<%=request.getContextPath()%>/prizeitems/goInfo?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}');" href="javascript:;">
+               <a title="查看" onclick="commonInfo('<%=request.getContextPath()%>/activities/goInfo?ACTIVITIES_ID=${var.ACTIVITIES_ID}');" href="javascript:;">
                 <i class="layui-icon">&#xe63c;</i>
               </a>
             </td>
