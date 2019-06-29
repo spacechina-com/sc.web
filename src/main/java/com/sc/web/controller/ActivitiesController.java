@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.sc.api.constant.IConstants;
 import com.sc.api.model.Page;
 import com.sc.api.model.Pd;
+import com.sc.api.response.ReturnModel;
 import com.sc.api.util.DateUtil;
 import com.sc.web.config.FileConfig;
 import com.sc.web.util.RestTemplateUtil;
@@ -75,7 +76,18 @@ public class ActivitiesController extends BaseController {
 			}
 		}
 
-		rest.post(IConstants.SC_SERVICE_KEY, "activities/save", pd, Pd.class);
+		String[] ACTIVITIES_PRIZEITEMS = pd.getString("PRIZEITEMS_ID_PERCENT").split(",");
+
+		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/save", pd, Pd.class);
+
+		for (int i = 0; i < ACTIVITIES_PRIZEITEMS.length; i++) {
+			String[] one = ACTIVITIES_PRIZEITEMS[i].split("_");
+			Pd pdpi = new Pd();
+			pdpi.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+			pdpi.put("PRIZEITEMS_ID", one[0]);
+			pdpi.put("PERCENT", one[1]);
+			rest.post(IConstants.SC_SERVICE_KEY, "activities/savePrizeitems", pdpi, Pd.class);
+		}
 
 		mv.addObject("msg", getMessageUrl("MSG_CODE_ADD_SUCCESS", new Object[] { "抽奖活动" }, ""));
 		mv.setViewName("redirect:/activities/listPage");
@@ -138,7 +150,18 @@ public class ActivitiesController extends BaseController {
 			}
 		}
 
+		String[] ACTIVITIES_PRIZEITEMS = pd.getString("PRIZEITEMS_ID_PERCENT").split(",");
+
 		rest.post(IConstants.SC_SERVICE_KEY, "activities/edit", pd, Pd.class);
+
+		for (int i = 0; i < ACTIVITIES_PRIZEITEMS.length; i++) {
+			String[] one = ACTIVITIES_PRIZEITEMS[i].split("_");
+			Pd pdpi = new Pd();
+			pdpi.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+			pdpi.put("PRIZEITEMS_ID", one[0]);
+			pdpi.put("PERCENT", one[1]);
+			rest.post(IConstants.SC_SERVICE_KEY, "activities/savePrizeitems", pdpi, Pd.class);
+		}
 
 		mv.addObject("msg", getMessageUrl("MSG_CODE_EDIT_SUCCESS", new Object[] { "抽奖活动" }, ""));
 		mv.setViewName("redirect:/activities/listPage");
@@ -203,6 +226,13 @@ public class ActivitiesController extends BaseController {
 				});
 		mv.addObject("goodsData", goodsData);
 
+		Pd pdpi = new Pd();
+		pdpi.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> prizeitemsData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAll", pdpi,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("prizeitemsData", prizeitemsData);
+
 		mv.addObject("pd", pd);
 		mv.setViewName("activities/add");
 		return mv;
@@ -220,6 +250,35 @@ public class ActivitiesController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
+		Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
+
+		Pd pdt = new Pd();
+		List<Pd> modalitiesData = rest.postForList(IConstants.SC_SERVICE_KEY, "modalities/listAll", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("modalitiesData", modalitiesData);
+
+		Pd pdml = new Pd();
+		pdml.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> goodsData = rest.postForList(IConstants.SC_SERVICE_KEY, "common/listAllGoods", pdml,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("goodsData", goodsData);
+
+		Pd pdpi = new Pd();
+		pdpi.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> prizeitemsData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAll", pdpi,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("prizeitemsData", prizeitemsData);
+
+		Pd pdap = new Pd();
+		pdap.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+		List<Pd> activitiesprizeitemsData = rest.postForList(IConstants.SC_SERVICE_KEY, "activities/listAllPrizeitems",
+				pdap, new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("activitiesprizeitemsData", activitiesprizeitemsData);
+
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
 
@@ -233,10 +292,66 @@ public class ActivitiesController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
+		Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
+
+		Pd pdt = new Pd();
+		List<Pd> modalitiesData = rest.postForList(IConstants.SC_SERVICE_KEY, "modalities/listAll", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("modalitiesData", modalitiesData);
+
+		Pd pdml = new Pd();
+		pdml.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> goodsData = rest.postForList(IConstants.SC_SERVICE_KEY, "common/listAllGoods", pdml,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("goodsData", goodsData);
+
+		Pd pdpi = new Pd();
+		pdpi.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> prizeitemsData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAll", pdpi,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("prizeitemsData", prizeitemsData);
+
+		Pd pdap = new Pd();
+		pdap.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+		List<Pd> activitiesprizeitemsData = rest.postForList(IConstants.SC_SERVICE_KEY, "activities/listAllPrizeitems",
+				pdap, new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("activitiesprizeitemsData", activitiesprizeitemsData);
+
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
 
 		mv.setViewName("activities/info");
 		return mv;
+	}
+
+	@RequestMapping(value = "/findGoodsBatchs")
+	@ResponseBody
+	public ReturnModel findGoodsBatchs() throws Exception {
+		ReturnModel rm = new ReturnModel();
+
+		Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
+
+		Pd pd = new Pd();
+		pd = this.getPd();
+		pd.put("COMPANY_ID", user.getString("COMPANY_ID"));
+		List<Pd> batchsData = rest.postForList(IConstants.SC_SERVICE_KEY, "common/listAllGoodsBatch", pd,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		rm.setData(batchsData);
+		return rm;
+	}
+
+	@RequestMapping(value = "/deletePrizeitems")
+	@ResponseBody
+	public ReturnModel deletePrizeitems() throws Exception {
+		ReturnModel rm = new ReturnModel();
+		Pd pd = new Pd();
+		pd = this.getPd();
+		rest.post(IConstants.SC_SERVICE_KEY, "activities/deletePrizeitems", pd, Pd.class);
+		return rm;
 	}
 }

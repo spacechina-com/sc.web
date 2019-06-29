@@ -41,7 +41,7 @@
       </span>
     </div>
     <div class="x-body">
-        <form enctype="multipart/form-data" class="layui-form" method="post" action="<%=request.getContextPath()%>/activities/save">
+        <form enctype="multipart/form-data" class="layui-form" method="post" action="<%=request.getContextPath()%>/activities/save" onsubmit="return checkCondition();">
           <div class="layui-form-item">
               <label for="username" class="layui-form-label">
                   <span class="x-red">*</span>所属类型
@@ -57,11 +57,11 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
-                  <span class="x-red">*</span>抽奖图片
+                  <span class="x-red">*</span>背景图片
               </label>
               <div class="layui-input-inline">
                   <table id="fileTable">
-                  		<tr><td><input id="file" type="file" lt="image" name="fil" onchange="showImg(this)" accept="image/*" lay-verify="nikename"/></td><td><img alt="展位图片"  width="150px" id="image" style="display:none;cursor:pointer;"/></td><td></td></tr>
+                  		<tr><td><input id="file" type="file" lt="image" name="fil" onchange="showImg(this)" accept="image/*" lay-verify="nikename"/></td><td><img alt="展位图片"  width="100px" id="image" style="display:none;cursor:pointer;"/></td><td></td></tr>
                   	</table>
               </div>
           </div>
@@ -70,7 +70,7 @@
                   <span class="x-red">*</span>主题
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username14" name="TOPIC" required="" lay-verify="nikenamews"
+                  <input type="text" id="L_username14" name="TOPIC" lay-verify="nikenamews"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -117,9 +117,35 @@
               </label>
               <div class="layui-input-inline">
                   <select id="BATCH_ID" name="BATCH_ID" class="valid">
+                  	<option value="">请选择</option>
                     <c:forEach var="b" items="${batchsData}">
                     	<option value="${b.BATCH_ID}">${b.BATCHNAME}</option>
                     </c:forEach>
+                  </select>
+              </div>
+          </div>
+           <div class="layui-form-item">
+              <label for="L_username" class="layui-form-label">
+                  <span class="x-red">*</span>奖项管理
+              </label>
+              <div class="layui-input-inline" style="width:800px;">
+                  <table class="layui-table x-admin">
+                  		<tr><td colspan="4" style="border: none;"><button class="layui-btn layui-btn-normal add"  type="button" style="float: right;">添加奖品</button></td></tr>
+                  		<tr class="thd"><td>奖品图片</td><td>奖品名称</td><td>中奖率</td><td>操作</td></tr>
+                  		<tbody id="tbd">
+
+                  		</tbody>
+                  	</table>
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="username" class="layui-form-label">
+                  <span class="x-red">*</span>状态
+              </label>
+              <div class="layui-input-inline">
+                  <select id="shipping" name="STATE" class="valid">
+                    <option value="1">启用</option>
+                    <option value="0">暂停</option>
                   </select>
               </div>
           </div>
@@ -142,17 +168,40 @@
           form.verify({
             nikename: function(value){
               if(value.length < 1){
-                return '群组图片不许为空';
+                return '背景图片不许为空';
               }
             }
           });
           
-          form.verify({
-              nikename1: function(value){
-                if(value.length < 1){
-                  return '二维码图片不许为空';
-                }
-              }
+          form.on('select(goods)', function(data){
+          	if(data.value == ''){
+            		$("#BATCH_ID").html("<option value=''>请选择</option>");
+            		form.render();
+            	}else{
+            		$.ajax({
+            			type: "POST",
+            			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
+            	    	data:{
+            	    		"GOODS_ID":data.value
+            	    	},
+            	    	async: false,
+            			dataType:'json',
+            			cache: false,
+            			beforeSend:function(){
+            				
+            			},
+            			success: function(data){
+            				var list = data.data;
+            				$.each(list,function(index,value){ 
+            					$("#BATCH_ID").append("<option value='"+value.BATCH_ID+"'>"+value.BATCHNAME+"</option>");
+            				});
+            				form.render();
+            			},
+            			error:function(){
+            				
+            			}
+            		});
+            	}
             });
           
         });
@@ -176,6 +225,78 @@
         	$("#"+$(obj).attr("lt"))[0].src=imageSrc;
         	$("#"+$(obj).attr("lt")).css("display","");
         }
+        
+        $(".add1").click(function(){
+        	$("#tbd").append(`<tr><td><input class="layui-input"/></td><td><input class="layui-input"/></td><td><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>`);
+        	$(".delete").click(function(){
+            	$(this).parent().parent().remove();
+            });
+        });
+        
+       	$(".add").click(function(){
+       		var htmlgp = "<div class='layui-form-item'><div class='layui-input-inline' style='width:100%;'><select id='PRIZEITEMS_ID_TEMP' class='valid'><option value=''>请选择奖品</option>";
+       		<c:forEach var="pi" items="${prizeitemsData}">
+       		htmlgp+="<option value='${pi.PRIZEITEMS_ID}' lt='${pi.IMAGE_PATH}'>${pi.DESCRIPTION}</option>";
+            </c:forEach>
+            htmlgp+="</select></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;'><input id='PRIZEITEMS_ID_PERCENT_TEMP' class='layui-input' placeholder='商品中奖率'/></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;color:red;'>友情提示:中奖率基数为1000.</div></div>";
+       		layer.open({
+           	  title:'选择奖品及设置中奖率',
+           	  area: ['600px', '400px'],
+           	  content: '<div>'+htmlgp+'</div>'
+           	  ,btn: ['确认', '取消']
+           	  ,yes: function(index, layero){
+           		 if($("#PRIZEITEMS_ID_TEMP").val()==''){
+           			layer.tips('请先选择奖品', '#PRIZEITEMS_ID_TEMP', {
+                        tips: [2, '#0FA6D8'], //设置tips方向和颜色 类型：Number/Array，默认：2 tips层的私有参数。支持上右下左四个方向，通过1-4进行方向设定。如tips: 3则表示在元素的下面出现。有时你还可能会定义一些颜色，可以设定tips: [1, '#c00']
+                        tipsMore: false, //是否允许多个tips 类型：Boolean，默认：false 允许多个意味着不会销毁之前的tips层。通过tipsMore: true开启
+                        time:2000  //2秒后销毁，还有其他的基础参数可以设置。。。。这里就不添加了
+                    });
+           			return false;
+           		 }
+           		if($("#PRIZEITEMS_ID_PERCENT_TEMP").val()==''){
+           			layer.tips('请设置择奖品中奖率', '#PRIZEITEMS_ID_PERCENT_TEMP', {
+                        tips: [2, '#0FA6D8'], //设置tips方向和颜色 类型：Number/Array，默认：2 tips层的私有参数。支持上右下左四个方向，通过1-4进行方向设定。如tips: 3则表示在元素的下面出现。有时你还可能会定义一些颜色，可以设定tips: [1, '#c00']
+                        tipsMore: false, //是否允许多个tips 类型：Boolean，默认：false 允许多个意味着不会销毁之前的tips层。通过tipsMore: true开启
+                        time:2000  //2秒后销毁，还有其他的基础参数可以设置。。。。这里就不添加了
+                    });
+           			return false;
+           		 }
+           		if($("#PRIZEITEMS_ID_TEMP").val()!='' && $("#PRIZEITEMS_ID_PERCENT_TEMP").val()!=''){
+           			var iid = $("#PRIZEITEMS_ID_TEMP").val();
+           			var iname = $("#PRIZEITEMS_ID_TEMP").find("option:selected").text();
+           			var path = $("#PRIZEITEMS_ID_TEMP").find("option:selected").attr("lt");
+           			var ipercent = $("#PRIZEITEMS_ID_PERCENT_TEMP").val();
+           			$("#tbd").append(`<tr><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=`+path+`" alt="图片" width="80"/></td><td><input type="hidden" name="PRIZEITEMS_ID_PERCENT" value="`+iid+`_`+ipercent+`"/>`+iname+`</td><td>`+ipercent+`</td><td align="center"><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>`);
+                	$(".delete").click(function(){
+                    	$(this).parent().parent().remove();
+                    });
+           			layer.close(index);
+           		 }
+           	    
+           	  }
+           	  ,btn2: function(index, layero){
+           	    //按钮【按钮二】的回调
+           	    //return false 开启该代码可禁止点击该按钮关闭
+           	  }
+           	  ,cancel: function(){
+           	    //右上角关闭回调
+           	    //return false 开启该代码可禁止点击该按钮关闭
+           	  }
+           	});
+        });
+        
+        $(".delete").click(function(){
+        	$(this).parent().parent().remove();
+        });
+        
+        function checkCondition(){
+        	if($("input[name='PRIZEITEMS_ID_PERCENT']").length==0){
+        		layer.alert("该活动暂无关联的奖品,请完善奖品信息栏位.");
+        		return false;
+        	}
+        	return true;
+        }
+        
         
     </script>
   </body>
