@@ -67,6 +67,15 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
+                  <span class="x-red">*</span>单人抽奖次数
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
+                  autocomplete="off" class="layui-input" value="${pd.SINGLE_LIMIT}" disabled="disabled">
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="L_username" class="layui-form-label">
                   <span class="x-red">*</span>主题
               </label>
               <div class="layui-input-inline">
