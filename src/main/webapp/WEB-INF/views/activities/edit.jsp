@@ -165,8 +165,8 @@
               </label>
               <div class="layui-input-inline">
                   <select id="shipping" name="STATE" class="valid">
-                    <option value="1">启用</option>
-                    <option value="0">暂停</option>
+                    <option value="1" <c:if test="${pd.STATE eq '1'}">selected="selected"</c:if>>启用</option>
+                    <option value="0" <c:if test="${pd.STATE eq '0'}">selected="selected"</c:if>>暂停</option>
                   </select>
               </div>
           </div>

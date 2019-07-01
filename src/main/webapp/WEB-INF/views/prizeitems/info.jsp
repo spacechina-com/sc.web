@@ -68,6 +68,17 @@
                   autocomplete="off" class="layui-input" value="${pd.SAMEMONEY}" disabled="disabled">
               </div>
           </div>
+           <div class="layui-form-item">
+              <label for="username" class="layui-form-label">
+                  <span class="x-red">*</span>自动处理
+              </label>
+              <div class="layui-input-inline">
+                  <select id="shippingQ" name="AUTOHANDER" class="valid" disabled="disabled">
+                    <option value="1" <c:if test="${pd.AUTOHANDER eq '1'}">selected="selected"</c:if>>是</option>
+                    <option value="0" <c:if test="${pd.AUTOHANDER eq '0'}">selected="selected"</c:if>>否</option>
+                  </select>
+              </div>
+          </div>
           <div class="layui-form-item">
               <label for="L_repass" class="layui-form-label">
               </label>

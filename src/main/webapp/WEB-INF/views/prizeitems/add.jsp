@@ -70,6 +70,17 @@
               </div>
           </div>
           <div class="layui-form-item">
+              <label for="username" class="layui-form-label">
+                  <span class="x-red">*</span>自动处理
+              </label>
+              <div class="layui-input-inline">
+                  <select id="shippingQ" name="AUTOHANDER" class="valid">
+                    <option value="1">是</option>
+                    <option value="0">否</option>
+                  </select>
+              </div>
+          </div>
+          <div class="layui-form-item">
               <label for="L_repass" class="layui-form-label">
               </label>
               <button  class="layui-btn" lay-filter="add" lay-submit="" type="submit">
