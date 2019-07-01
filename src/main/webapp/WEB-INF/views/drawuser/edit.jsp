@@ -37,17 +37,19 @@
       <span class="layui-breadcrumb">
         <a href="">奖品池管理</a>
         <a>
-          <cite>查看奖品</cite></a>
+          <cite>编辑奖品</cite></a>
       </span>
     </div>
     <div class="x-body">
+        <form enctype="multipart/form-data" class="layui-form" method="post" action="<%=request.getContextPath()%>/prizeitems/edit">
+          <input type="hidden" name="PRIZEITEMS_ID" value="${pd.PRIZEITEMS_ID}"/>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
                   <span class="x-red">*</span>奖品图片
               </label>
               <div class="layui-input-inline">
                   <table id="fileTable">
-                  		<tr><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${pd.IMAGE_PATH}"  alt="展位图片"  width="150px" id="image-0" style="cursor:pointer;"/></td><td></td></tr>
+                  		<tr><td><input id="file" type="file" lt="image" name="file" onchange="showImg(this)" accept="image/*" lay-verify="nikename110"/></td><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${pd.IMAGE_PATH}"  alt="展位图片"  width="150px" id="image" style="cursor:pointer;"/></td><td></td></tr>
                   	</table>
               </div>
           </div>
@@ -56,7 +58,7 @@
                   <span class="x-red">*</span>奖品介绍
               </label>
               <div class="layui-input-inline">
-                  <textarea placeholder="请输入内容" id="desc2" name="DESCRIPTION" class="layui-textarea" disabled="disabled">${pd.DESCRIPTION}</textarea>
+                  <textarea placeholder="请输入内容" id="desc2" name="DESCRIPTION" class="layui-textarea">${pd.DESCRIPTION}</textarea>
               </div>
           </div>
           <div class="layui-form-item">
@@ -64,8 +66,8 @@
                   <span class="x-red">*</span>等值
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username14" name="SAMEMONEY" required="" lay-verify="nikename"
-                  autocomplete="off" class="layui-input" value="${pd.SAMEMONEY}" disabled="disabled">
+                  <input type="text" id="L_username14" name="SAMEMONEY" required="" lay-verify="nikenamew"
+                  autocomplete="off" class="layui-input" value="${pd.SAMEMONEY}">
               </div>
           </div>
            <div class="layui-form-item">
@@ -73,31 +75,20 @@
                   <span class="x-red">*</span>自动处理
               </label>
               <div class="layui-input-inline">
-                  <select id="shippingQ" name="AUTOHANDER" class="valid" disabled="disabled">
+                  <select id="shippingQ" name="AUTOHANDER" class="valid">
                     <option value="1" <c:if test="${pd.AUTOHANDER eq '1'}">selected="selected"</c:if>>是</option>
                     <option value="0" <c:if test="${pd.AUTOHANDER eq '0'}">selected="selected"</c:if>>否</option>
                   </select>
               </div>
           </div>
           <div class="layui-form-item">
-              <label for="username" class="layui-form-label">
-                  <span class="x-red">*</span>处理类型
-              </label>
-              <div class="layui-input-inline">
-                  <select id="goods" name="HANDERTYPE_ID" class="valid" lay-filter="goodsQA" disabled="disabled">
-                    <c:forEach var="ht" items="${handertypeData}">
-                    	<option value="${ht.HANDERTYPE_ID}" <c:if test="${pd.HANDERTYPE_ID eq ht.HANDERTYPE_ID}">selected="selected"</c:if>>${ht.DESCRIPTION}</option>
-                    </c:forEach>
-                  </select>
-              </div>
-          </div>
-          <div class="layui-form-item">
               <label for="L_repass" class="layui-form-label">
               </label>
-               <button  class="layui-btn layui-btn-normal" onclick="history.back()" type="button">
-                  返回
+              <button  class="layui-btn" lay-filter="add" lay-submit="" type="submit">
+                  编辑
               </button>
           </div>
+      </form>
     </div>
     <script>
         layui.use(['form','layer'], function(){

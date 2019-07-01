@@ -75,6 +75,9 @@
                <a title="查看" onclick="commonInfo('<%=request.getContextPath()%>/activities/goInfo?ACTIVITIES_ID=${var.ACTIVITIES_ID}');" href="javascript:;">
                 <i class="layui-icon">&#xe63c;</i>
               </a>
+              <a title="跟踪" onclick="commonInfo('<%=request.getContextPath()%>/drawuser/listPage?ACTIVITIES_ID=${var.ACTIVITIES_ID}');" href="javascript:;">
+                <i class="layui-icon">&#xe63c;</i>
+              </a>
             </td>
           </tr>
           </c:forEach>

@@ -2,11 +2,13 @@ package com.sc.web.controller;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -179,6 +181,12 @@ public class PrizeitemsController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
+		Pd pdt = new Pd();
+		List<Pd> handertypeData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAllHandertype", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("handertypeData", handertypeData);
+
 		mv.addObject("pd", pd);
 		mv.setViewName("prizeitems/add");
 		return mv;
@@ -196,6 +204,12 @@ public class PrizeitemsController extends BaseController {
 		Pd pd = new Pd();
 		pd = this.getPd();
 
+		Pd pdt = new Pd();
+		List<Pd> handertypeData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAllHandertype", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("handertypeData", handertypeData);
+
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
 
@@ -208,6 +222,12 @@ public class PrizeitemsController extends BaseController {
 		ModelAndView mv = this.getModelAndView();
 		Pd pd = new Pd();
 		pd = this.getPd();
+
+		Pd pdt = new Pd();
+		List<Pd> handertypeData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAllHandertype", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("handertypeData", handertypeData);
 
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
