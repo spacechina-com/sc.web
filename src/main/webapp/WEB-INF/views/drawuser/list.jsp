@@ -23,8 +23,7 @@
   <body>
     <div class="x-nav">
       <span class="layui-breadcrumb">
-      	<a href="">抽奖池管理</a>
-        <a href="">抽奖记录管理</a>
+      	<a href="">记录池管理</a>
         <a>
           <cite>列表查询</cite></a>
       </span>
@@ -33,6 +32,16 @@
     <form class="layui-form layui-col-md12 x-so" method="post" action="<%=request.getContextPath()%>/drawuser/listPage?ACTIVITIES_ID=${pd.ACTIVITIES_ID}">
       <div class="layui-row">
           <input type="text" name="keywords"  placeholder="请输入关键字" autocomplete="off" class="layui-input" value="${page.pd.keywords}">
+          
+          <div class="layui-input-inline">
+                  <select id="shipping21" name="STATE" class="valids">
+                  	<option value="">全部状态</option>
+                    <option value="1" <c:if test="${page.pd.STATE ne  null && page.pd.STATE eq '1'}">selected="selected"</c:if>>已处理</option>
+                    <option value="0" <c:if test="${page.pd.STATE ne  null && page.pd.STATE eq '0'}">selected="selected"</c:if>>未处理</option>
+                  </select>
+          </div>
+          
+          
           <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
         
       </div>
@@ -44,6 +53,7 @@
       <table class="layui-table x-admin">
         <thead>
           <tr>
+          	<th>所属抽奖</th>
             <th>奖品图片</th>
             <th>描述</th>
             <th>抽奖时间</th>
@@ -56,6 +66,7 @@
         <tbody>
           <c:forEach var="var" items="${page.data}">
           	<tr>
+          	<td>${var.TOPIC}</td>
            	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.IMAGE_PATH}" alt="图片" width="100"/></td>
             <td>${var.DESCRIPTION}</td>
             <td>${var.CREATE_TIME}</td>
@@ -66,7 +77,7 @@
               <c:choose>
               	<c:when test="${var.STATE eq 1}"><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">已处理</a></c:when>
               	<c:when test="${var.STATE eq 0}"><a href="javascript:;" class="layui-btn layui-btn-normal" onclick="doHander('${var.DRAWUSER_ID}','${var.MEMBER_ID}','${var.OPENID}','${var.HANDERTYPE_ID}','${var.REALNAME}','${var.PHONE}','${var.ADDRESSDETIAL}')">未处理</a></c:when>
-              	<c:otherwise><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">处理中</a></c:otherwise>
+              	<c:otherwise><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">未知</a></c:otherwise>
               </c:choose>
             </td>
           </tr>
