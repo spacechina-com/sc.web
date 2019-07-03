@@ -265,11 +265,20 @@ public class DrawuserController extends BaseController {
 					config.getHttpConnectTimeoutMs(), config.getHttpReadTimeoutMs());
 			System.err.println(notityXml);
 
-			Pd pdd = new Pd();
-			pdd.put("DRAWUSER_ID", pd.getString("DRAWUSER_ID"));
-			pdd = rest.post(IConstants.SC_SERVICE_KEY, "drawuser/find", pdd, Pd.class);
-			pdd.put("STATE", IConstants.STRING_1);
-			rest.post(IConstants.SC_SERVICE_KEY, "drawuser/edit", pdd, Pd.class);
+			Map<String, String> dataMap = WXPayUtil.xmlToMap(notityXml);
+
+			String resultCode = dataMap.get("result_code");
+			if ("SUCCESS".equals(resultCode)) {
+				Pd pdd = new Pd();
+				pdd.put("DRAWUSER_ID", pd.getString("DRAWUSER_ID"));
+				pdd = rest.post(IConstants.SC_SERVICE_KEY, "drawuser/find", pdd, Pd.class);
+				pdd.put("STATE", IConstants.STRING_1);
+				rest.post(IConstants.SC_SERVICE_KEY, "drawuser/edit", pdd, Pd.class);
+			} else {
+				rm.setFlag(false);
+				logger.error(dataMap.get("err_code_des"));
+			}
+
 		} catch (Exception e) {
 			rm.setFlag(false);
 			e.printStackTrace();
