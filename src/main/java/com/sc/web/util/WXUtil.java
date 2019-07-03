@@ -13,29 +13,25 @@ public class WXUtil {
 		this.appSecret = appSecret;
 	}
 
-	public String token() {
+	public String token() throws Exception {
 		String rs = null;
-		try {
-			String str = HttpUtils.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="
-					+ appId + "&secret=" + appSecret);
-			JSONObject obj = JSONObject.fromObject(str);
-			rs = obj.getString("access_token");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		String str = HttpUtils.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" + appId
+				+ "&secret=" + appSecret);
+		JSONObject obj = JSONObject.fromObject(str);
+		rs = obj.getString("access_token");
+
 		return rs;
 	}
 
-	public String openId(String code) {
+	public String openId(String code) throws Exception {
 		String rs = null;
-		try {
-			String str = HttpUtils.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + appId + "&secret="
-					+ appSecret + "&code=" + code + "&grant_type=authorization_code");
-			JSONObject obj = JSONObject.fromObject(str);
-			rs = obj.getString("openid");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		String str = HttpUtils.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + appId + "&secret="
+				+ appSecret + "&code=" + code + "&grant_type=authorization_code");
+		JSONObject obj = JSONObject.fromObject(str);
+		rs = obj.getString("openid");
+
 		return rs;
 	}
 
@@ -52,7 +48,7 @@ public class WXUtil {
 		return rs;
 	}
 
-	public JSONObject user(String openID) {
+	public JSONObject user(String openID) throws Exception {
 		String token = token();
 		JSONObject rs = null;
 		try {
