@@ -170,7 +170,10 @@ public class DrawuserController extends BaseController {
 
 		pdm = rest.post(IConstants.SC_SERVICE_KEY, "merchant/findBy", pdm, Pd.class);
 
-		WXUtil.sendMessage("【云码系统】 发现你没有快递信息不完整,完善信息才能处理.", pd.getString("OPENID"));
+		String APPID = pdm.getString("APPID");
+		String APPSECRET = pdm.getString("APPSECRET");
+
+		new WXUtil(APPID, APPSECRET).sendMessage("【云码系统】 发现快递信息不完整,请尽快处理,以免影响奖品发放.", pd.getString("OPENID"));
 
 		return rm;
 	}
