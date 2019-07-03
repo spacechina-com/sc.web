@@ -1,5 +1,11 @@
 package com.sc.web.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.github.wxpay.sdk.WXPay;
+import com.github.wxpay.sdk.WXPayConstants.SignType;
+import com.github.wxpay.sdk.WXPayUtil;
 import com.sc.api.constant.IConstants;
 import com.sc.api.model.Page;
 import com.sc.api.model.Pd;
 import com.sc.api.response.ReturnModel;
+import com.sc.api.util.DateUtil;
+import com.sc.web.config.WXPayConfigImpl;
 import com.sc.web.util.RestTemplateUtil;
 import com.sc.web.util.WXUtil;
 
@@ -158,7 +169,7 @@ public class DrawuserController extends BaseController {
 
 	@RequestMapping(value = "/sendNoAddress")
 	@ResponseBody
-	public ReturnModel deletePrizeitems() throws Exception {
+	public ReturnModel sendNoAddress() {
 		ReturnModel rm = new ReturnModel();
 		Pd pd = new Pd();
 		pd = this.getPd();
@@ -173,8 +184,108 @@ public class DrawuserController extends BaseController {
 		String APPID = pdm.getString("APPID");
 		String APPSECRET = pdm.getString("APPSECRET");
 
-		new WXUtil(APPID, APPSECRET).sendMessage("【云码系统】 发现快递信息不完整,请尽快处理,以免影响奖品发放.", pd.getString("OPENID"));
+		try {
+			new WXUtil(APPID, APPSECRET).sendMessage("【云码系统】 发现快递信息不完整,请尽快处理,以免影响奖品发放.", pd.getString("OPENID"));
+		} catch (Exception e) {
+			rm.setFlag(false);
+		}
 
 		return rm;
+	}
+
+	@RequestMapping(value = "/express")
+	@ResponseBody
+	public ReturnModel express() throws Exception {
+		ReturnModel rm = new ReturnModel();
+		Pd pd = new Pd();
+		pd = this.getPd();
+
+		Pd pdd = rest.post(IConstants.SC_SERVICE_KEY, "drawuser/find", pd, Pd.class);
+		pdd.put("STATE", IConstants.STRING_1);
+		rest.post(IConstants.SC_SERVICE_KEY, "drawuser/edit", pdd, Pd.class);
+
+		pd.put("CREATE_TIME", DateUtil.getTime());
+		pd.put("STATE", IConstants.STRING_0);
+		rest.post(IConstants.SC_SERVICE_KEY, "express/save", pd, Pd.class);
+
+		return rm;
+	}
+
+	@RequestMapping(value = "/money")
+	@ResponseBody
+	public ReturnModel money() {
+		ReturnModel rm = new ReturnModel();
+		Pd pd = new Pd();
+		pd = this.getPd();
+
+		try {
+			Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
+
+			Pd pdm = new Pd();
+			pdm.put("COMPANY_ID", user.getString("COMPANY_ID"));
+
+			pdm = rest.post(IConstants.SC_SERVICE_KEY, "merchant/findBy", pdm, Pd.class);
+
+			String APPID = pdm.getString("APPID");
+			String APPSECRET = pdm.getString("APPSECRET");
+			String MCHID = pdm.getString("MCHID");
+			String MCHKEY = pdm.getString("MCHKEY");
+			String MCHCERT = pdm.getString("MCHCERT");
+
+			WXPayConfigImpl config = new WXPayConfigImpl(APPID, APPSECRET, MCHID, MCHKEY, MCHCERT);
+
+			logger.info("进入红包付款到个人");
+			WXPay wxpay = new WXPay(config, SignType.MD5);
+			Map<String, String> parameters = new HashMap<String, String>();
+			parameters.put("mch_appid", config.getAppID());
+			parameters.put("mchid", config.getMchID());
+			parameters.put("nonce_str", WXPayUtil.generateNonceStr());
+			parameters.put("partner_trade_no", pd.getString("DRAWUSER_ID"));
+			parameters.put("openid", pd.getString("OPENID"));
+			parameters.put("check_name", "NO_CHECK");
+			String fee = pd.getString("MONEY");
+			if (fee.indexOf(".") != -1) {
+				fee = fee.substring(0, fee.indexOf("."));
+			}
+			parameters.put("amount", fee);
+			parameters.put("spbill_create_ip", getIpAddr(getRequest()));
+			parameters.put("desc", "云码系统红包现金");
+			// 签名
+			String sign = WXPayUtil.generateSignature(parameters, config.getKey());
+			parameters.put("sign", sign);
+
+			String notityXml = wxpay.requestWithCert(
+					"https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers", parameters,
+					config.getHttpConnectTimeoutMs(), config.getHttpReadTimeoutMs());
+			System.err.println(notityXml);
+
+			Pd pdd = new Pd();
+			pdd.put("DRAWUSER_ID", pd.getString("DRAWUSER_ID"));
+			pdd = rest.post(IConstants.SC_SERVICE_KEY, "drawuser/find", pdd, Pd.class);
+			pdd.put("STATE", IConstants.STRING_1);
+			rest.post(IConstants.SC_SERVICE_KEY, "drawuser/edit", pdd, Pd.class);
+		} catch (Exception e) {
+			rm.setFlag(false);
+			e.printStackTrace();
+		}
+
+		return rm;
+	}
+
+	private String getIpAddr(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (StringUtils.isNotEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+			int index = ip.indexOf(",");
+			if (index != -1) {
+				return ip.substring(0, index);
+			} else {
+				return ip;
+			}
+		}
+		ip = request.getHeader("X-Real-IP");
+		if (StringUtils.isNotEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+		return request.getRemoteAddr();
 	}
 }

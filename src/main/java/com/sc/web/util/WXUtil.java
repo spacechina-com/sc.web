@@ -39,18 +39,16 @@ public class WXUtil {
 		return rs;
 	}
 
-	public JSONObject sendMessage(String message, String openID) {
+	public JSONObject sendMessage(String message, String openID) throws Exception {
 		String token = token();
 		String json = "{\"touser\": \"" + openID + "\",\"msgtype\": \"text\", \"text\": {\"content\": \"" + message
 				+ "\"}}";
 		JSONObject rs = null;
-		try {
-			String str = HttpUtils.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + token,
-					json);
-			rs = JSONObject.fromObject(str);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		String str = HttpUtils.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=" + token,
+				json);
+		rs = JSONObject.fromObject(str);
+
 		return rs;
 	}
 

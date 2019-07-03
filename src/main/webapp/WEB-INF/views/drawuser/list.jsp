@@ -76,7 +76,7 @@
             <td class="td-manage">
               <c:choose>
               	<c:when test="${var.STATE eq 1}"><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">已处理</a></c:when>
-              	<c:when test="${var.STATE eq 0}"><a href="javascript:;" class="layui-btn layui-btn-normal" onclick="doHander('${var.DRAWUSER_ID}','${var.MEMBER_ID}','${var.OPENID}','${var.HANDERTYPE_ID}','${var.REALNAME}','${var.PHONE}','${var.ADDRESSDETIAL}')">未处理</a></c:when>
+              	<c:when test="${var.STATE eq 0}"><a href="javascript:;" class="layui-btn layui-btn-normal" onclick="doHander('${var.DRAWUSER_ID}','${var.OPENID}','${var.HANDERTYPE_ID}','${var.SAMEMONEY}','${var.REALNAME}','${var.PHONE}','${var.ADDRESSDETIAL}')">未处理</a></c:when>
               	<c:otherwise><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">未知</a></c:otherwise>
               </c:choose>
             </td>
@@ -107,7 +107,11 @@
 				
 			},
 			success: function(data){
-				layer.alert("推送完善地址消息成功");
+				if(data.flag){
+					layer.alert("推送完善地址消息成功");	
+				}else{
+					layer.alert("推送完善地址消息失败");
+				}
 			},
 			error:function(){
 				
@@ -115,17 +119,74 @@
 		});
     }
     
-	function handerHB(mid){
-    	
+    function express(did,no){
+    	$.ajax({
+			type: "POST",
+			url: '<%=request.getContextPath()%>/drawuser/express',
+	    	data:{
+	    		"DRAWUSER_ID":did,
+	    		"EXPRESSNO":no
+	    	},
+	    	async: false,
+			dataType:'json',
+			cache: false,
+			beforeSend:function(){
+				
+			},
+			success: function(data){
+				if(data.flag){
+					layer.alert("已处理,关联快递单号成功",function(){
+						location.reload();
+					});
+				}else{
+					layer.alert("快递处理失败");
+				}
+				
+			},
+			error:function(){
+				
+			}
+		});
     }
     
-    function doHander(did,mid,oid,tid,name,phone,address){
+	function handerMoney(did,oid,sm){
+		$.ajax({
+			type: "POST",
+			url: '<%=request.getContextPath()%>/drawuser/money',
+	    	data:{
+	    		"DRAWUSER_ID":did,
+	    		"OPENID":oid,
+	    		"MONEY":sm
+	    	},
+	    	async: false,
+			dataType:'json',
+			cache: false,
+			beforeSend:function(){
+				
+			},
+			success: function(data){
+				if(data.flag){
+					layer.alert("已处理,发放红包成功",function(){
+						location.reload();
+					});
+				}else{
+					layer.alert("红包处理失败");
+				}
+			},
+			error:function(){
+				
+			}
+		});
+    }
+    
+    function doHander(did,oid,tid,sm,name,phone,address){
     	if(tid == '1'){
     		layer.alert("祝福类系统应该设置自动处理");
     		return;
     	} else if(tid == '2'){
     		layer.confirm("确认该用户商户已设置白名单?",function(index){
-    			
+    			handerMoney(did,oid,sm);
+    			layer.close(index);
             });
     	} else if(tid == '3'){
     		
@@ -138,11 +199,20 @@
     			layer.open({
     	         	  title:'处理抽奖记录',
     	         	  area: ['400px', '200px'],
-    	         	  content: '<div><input id="PRIZEITEMS_ID_PERCENT_TEMP" class="layui-input" placeholder="快递单号"/></div>'
+    	         	  content: '<div><input id="EXPRESSNO" class="layui-input" placeholder="快递单号"/></div>'
     	         	  ,btn: ['确认', '取消']
     	         	  ,yes: function(index, layero){
-    	         		  
-    	         		layer.close(index);
+    	         		if($("#EXPRESSNO").val()==""){
+    	         			layer.tips('快递单号不许为空', '#EXPRESSNO', {
+    	                        tips: [2, '#0FA6D8'], //设置tips方向和颜色 类型：Number/Array，默认：2 tips层的私有参数。支持上右下左四个方向，通过1-4进行方向设定。如tips: 3则表示在元素的下面出现。有时你还可能会定义一些颜色，可以设定tips: [1, '#c00']
+    	                        tipsMore: false, //是否允许多个tips 类型：Boolean，默认：false 允许多个意味着不会销毁之前的tips层。通过tipsMore: true开启
+    	                        time:3000  //3秒后销毁，还有其他的基础参数可以设置。。。。这里就不添加了
+    	                    });
+    	         			return false;
+    	         		}else{
+	    	         		express(did,$("#EXPRESSNO").val()) ; 
+	    	         		layer.close(index);
+    	         		}
     	         	  }
     	         	  ,btn2: function(index, layero){
     	         	    //按钮【按钮二】的回调
