@@ -276,7 +276,7 @@ public class DrawuserController extends BaseController {
 				rest.post(IConstants.SC_SERVICE_KEY, "drawuser/edit", pdd, Pd.class);
 			} else {
 				rm.setFlag(false);
-				logger.error(dataMap.get("err_code_des"));
+				rm.setMessage(dataMap.get("err_code_des"));
 			}
 
 		} catch (Exception e) {

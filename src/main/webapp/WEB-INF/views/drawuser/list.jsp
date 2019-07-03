@@ -170,7 +170,7 @@
 						location.reload();
 					});
 				}else{
-					layer.alert("红包处理失败");
+					layer.alert(data.message);
 				}
 			},
 			error:function(){
