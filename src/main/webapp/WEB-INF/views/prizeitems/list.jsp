@@ -32,7 +32,7 @@
     <form class="layui-form layui-col-md12 x-so" method="post" action="<%=request.getContextPath()%>/prizeitems/listPage">
       <div class="layui-row">
           <input type="text" name="keywords"  placeholder="请输入关键字" autocomplete="off" class="layui-input" value="${page.pd.keywords}">
-          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i>搜索</button>
         
       </div>
       <xblock>
@@ -56,14 +56,14 @@
             <td>${var.SAMEMONEY}</td>
             <td>${var.CREATE_TIME}</td>
             <td class="td-manage">
-              <a title="编辑"  onclick="commonEdit('<%=request.getContextPath()%>/prizeitems/goEdit?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}')" href="javascript:;">
-                <i class="layui-icon">&#xe642;</i>
+              <a title="编辑" class="layui-btn layui-btn-warm"  onclick="commonEdit('<%=request.getContextPath()%>/prizeitems/goEdit?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}')" href="javascript:;">
+                <i class="layui-icon">&#xe642;</i>编辑
               </a>
-          	   <a title="删除" onclick="commonDelete('<%=request.getContextPath()%>/prizeitems/delete?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}');" href="javascript:;">
-                 <i class="layui-icon">&#xe640;</i>
+          	   <a title="删除" class="layui-btn layui-btn-danger" onclick="commonDelete('<%=request.getContextPath()%>/prizeitems/delete?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}');" href="javascript:;">
+                 <i class="layui-icon">&#xe640;</i>删除
                </a>
-               <a title="查看" onclick="commonInfo('<%=request.getContextPath()%>/prizeitems/goInfo?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}');" href="javascript:;">
-                <i class="layui-icon">&#xe63c;</i>
+               <a title="查看" class="layui-btn" onclick="commonInfo('<%=request.getContextPath()%>/prizeitems/goInfo?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}');" href="javascript:;">
+                <i class="layui-icon">&#xe63c;</i>查看
               </a>
             </td>
           </tr>

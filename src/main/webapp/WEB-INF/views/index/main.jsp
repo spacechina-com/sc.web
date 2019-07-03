@@ -28,11 +28,11 @@
     <div class="container">
         <div class="logo"><a href="<%=request.getContextPath()%>/index">营销管理后台中心</a></div>
         <div class="left_open">
-            <i title="展开左侧栏" class="iconfont">&#xe699;</i>
+            <i title="展开左侧栏" class="iconfont" style="color:#000000;font-size:18px;">&#xe699;</i>
         </div>
         <ul class="layui-nav right" lay-filter="">
-          <li class="layui-nav-item">
-            <a href="javascript:;">您好：${USER_SESSION.USERNAME} 管理员</a>
+          <li class="layui-nav-item" style="font-size:14px;">
+           		 你好：${USER_SESSION.USERNAME} 管理员
           </li>
         </ul>
         
@@ -103,9 +103,10 @@
     <!-- 右侧主体结束 -->
     <!-- 中部结束 -->
     <!-- 底部开始 -->
-    <div class="footer">
+    <!-- <div class="footer">
         <div class="copyright">Copyright ©2019 ${SYSTEM_NAME} All Rights Reserved</div>  
     </div>
+     -->
     <!-- 底部结束 -->
     <script type="text/javascript">
     	

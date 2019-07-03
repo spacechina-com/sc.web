@@ -42,7 +42,7 @@
           </div>
           
           
-          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+          <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i>搜索</button>
         
       </div>
       <!-- 
@@ -77,7 +77,7 @@
               <c:choose>
               	<c:when test="${var.STATE eq 1}"><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">已处理</a></c:when>
               	<c:when test="${var.STATE eq 0}"><a href="javascript:;" class="layui-btn layui-btn-normal" onclick="doHander('${var.DRAWUSER_ID}','${var.OPENID}','${var.HANDERTYPE_ID}','${var.SAMEMONEY}','${var.REALNAME}','${var.PHONE}','${var.ADDRESSDETIAL}')">未处理</a></c:when>
-              	<c:otherwise><a href="javascript:;" class="layui-btn layui-btn-primary" disabled="disabled">未知</a></c:otherwise>
+              	<c:otherwise>未知</c:otherwise>
               </c:choose>
             </td>
           </tr>
