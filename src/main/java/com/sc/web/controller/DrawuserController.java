@@ -1,5 +1,6 @@
 package com.sc.web.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import com.sc.api.model.Page;
 import com.sc.api.model.Pd;
 import com.sc.api.response.ReturnModel;
 import com.sc.api.util.DateUtil;
+import com.sc.web.config.FileConfig;
 import com.sc.web.config.WXPayConfigImpl;
 import com.sc.web.util.RestTemplateUtil;
 import com.sc.web.util.WXUtil;
@@ -35,6 +37,9 @@ public class DrawuserController extends BaseController {
 
 	@Autowired
 	RestTemplateUtil rest;
+
+	@Autowired
+	FileConfig fileConfig;
 
 	/**
 	 * 保存
@@ -232,7 +237,8 @@ public class DrawuserController extends BaseController {
 			String MCHKEY = pdm.getString("MCHKEY");
 			String MCHCERT = pdm.getString("MCHCERT");
 
-			WXPayConfigImpl config = new WXPayConfigImpl(APPID, APPSECRET, MCHID, MCHKEY, MCHCERT);
+			WXPayConfigImpl config = new WXPayConfigImpl(APPID, APPSECRET, MCHID, MCHKEY,
+					fileConfig.getDirCert() + File.separator + MCHCERT);
 
 			logger.info("进入红包付款到个人");
 			WXPay wxpay = new WXPay(config, SignType.MD5);
