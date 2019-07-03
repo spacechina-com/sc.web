@@ -29,6 +29,8 @@ import com.sc.web.config.WXPayConfigImpl;
 import com.sc.web.util.RestTemplateUtil;
 import com.sc.web.util.WXUtil;
 
+import net.sf.json.JSONObject;
+
 @Controller
 @RequestMapping("drawuser")
 public class DrawuserController extends BaseController {
@@ -190,7 +192,13 @@ public class DrawuserController extends BaseController {
 		String APPSECRET = pdm.getString("APPSECRET");
 
 		try {
-			new WXUtil(APPID, APPSECRET).sendMessage("【云码系统】 发现快递信息不完整,请尽快处理,以免影响奖品发放.", pd.getString("OPENID"));
+			JSONObject obj = new WXUtil(APPID, APPSECRET).sendMessage("【云码系统】 发现快递信息不完整,请尽快处理,以免影响奖品发放.",
+					pd.getString("OPENID"));
+
+			if (!obj.getString("errmsg").equals("ok")) {
+				rm.setFlag(false);
+			}
+
 		} catch (Exception e) {
 			rm.setFlag(false);
 		}
