@@ -67,7 +67,7 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
-                  <span class="x-red">*</span>单人抽奖次数
+                  	单人抽奖次数
               </label>
               <div class="layui-input-inline">
                   <input type="text" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
@@ -76,7 +76,7 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
-                  <span class="x-red">*</span>单人日抽奖次数
+                  	单人日抽奖次数
               </label>
               <div class="layui-input-inline">
                   <input type="text" id="L_username143" name="DAY_LIMIT" lay-verify="nikenamewAsd"
@@ -133,13 +133,19 @@
               <label for="username" class="layui-form-label">
                   	产品批次
               </label>
-              <div class="layui-input-inline">
+              
+              <div class="layui-input-inline" style="width:500px;">
+              		<input type="hidden" id="BATCH_ID" name="BATCH_ID"/>
+              		<input type="text" id="BATCH_ID_NAME" lay-verify="nikenamewds"
+                  autocomplete="off" class="layui-input" onclick="checkBatch();"/>
+                  <!-- 
                   <select id="BATCH_ID" name="BATCH_ID" class="valid">
                   	<option value="">请选择</option>
                     <c:forEach var="b" items="${batchsData}">
                     	<option value="${b.BATCH_ID}">${b.BATCHNAME}</option>
                     </c:forEach>
                   </select>
+                  -->
               </div>
           </div>
            <div class="layui-form-item">
@@ -192,36 +198,8 @@
           });
           
           form.on('select(goods)', function(data){
-          	if(data.value == ''){
-            		$("#BATCH_ID").html("<option value=''>请选择</option>");
-            		form.render();
-            	}else{
-            		$.ajax({
-            			type: "POST",
-            			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
-            	    	data:{
-            	    		"GOODS_ID":data.value
-            	    	},
-            	    	async: false,
-            			dataType:'json',
-            			cache: false,
-            			beforeSend:function(){
-            				
-            			},
-            			success: function(data){
-            				var list = data.data;
-            				$.each(list,function(index,value){ 
-            					$("#BATCH_ID").append("<option value='"+value.BATCH_ID+"'>"+value.BATCHNAME+"</option>");
-            				});
-            				form.render();
-            			},
-            			error:function(){
-            				
-            			}
-            		});
-            	}
-            });
-          
+            		$("#BATCH_ID").val('');
+            		$("#BATCH_ID_NAME").val('');
         });
         
         layui.use('laydate', function(){
@@ -237,6 +215,7 @@
               elem: '#end' //指定元素
             });
           });
+        });
         
         function showImg(obj){
         	var imageSrc = window.URL?window.URL.createObjectURL(obj.files[0]):obj.value;
@@ -315,6 +294,33 @@
         	return true;
         }
         
+        
+        function checkBatch(){
+        	if(!$("#GOODS_ID").val()){
+        		layer.alert("请先选择关联产品")
+        		return;
+        	}else{
+	        	$.ajax({
+	    			type: "POST",
+	    			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
+	    	    	data:{
+	    	    		"GOODS_ID":$("#GOODS_ID").val()
+	    	    	},
+	    	    	async: false,
+	    			dataType:'json',
+	    			cache: false,
+	    			beforeSend:function(){
+	    				
+	    			},
+	    			success: function(data){
+	    				
+	    			},
+	    			error:function(){
+	    				
+	    			}
+	    		});
+        	}
+        }
         
     </script>
   </body>

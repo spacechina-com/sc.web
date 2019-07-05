@@ -68,7 +68,7 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
-                  <span class="x-red">*</span>单人抽奖次数
+                  	单人抽奖次数
               </label>
               <div class="layui-input-inline">
                   <input type="text" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
@@ -77,7 +77,7 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
-                  <span class="x-red">*</span>单人日抽奖次数
+                  	单人日抽奖次数
               </label>
               <div class="layui-input-inline">
                   <input type="text" id="L_username143" name="DAY_LIMIT" lay-verify="nikenamewAsd"
