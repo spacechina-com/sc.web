@@ -162,6 +162,12 @@ public class PrizeitemsController extends BaseController {
 
 		Page page = rest.post(IConstants.SC_SERVICE_KEY, "prizeitems/listPage", pd, Page.class);
 
+		Pd pdt = new Pd();
+		List<Pd> handertypeData = rest.postForList(IConstants.SC_SERVICE_KEY, "prizeitems/listAllHandertype", pdt,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		mv.addObject("handertypeData", handertypeData);
+
 		mv.setViewName("/prizeitems/list");
 		mv.addObject("page", page);
 		mv.addObject("pd", pd);

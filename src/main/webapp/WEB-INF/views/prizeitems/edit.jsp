@@ -49,7 +49,8 @@
               </label>
               <div class="layui-input-inline">
                   <table id="fileTable">
-                  		<tr><td><input id="file" type="file" lt="image" name="file" onchange="showImg(this)" accept="image/*" lay-verify="nikename110"/></td><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${pd.IMAGE_PATH}"  alt="展位图片"  width="150px" id="image" style="cursor:pointer;"/></td><td></td></tr>
+                  		<tr><td><input id="file" type="file" lt="image" name="file" onchange="showImg(this)" accept="image/*" lay-verify="nikename110"/></td><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${pd.IMAGE_PATH}"  alt="展位图片"  width="100px" id="image" style="cursor:pointer;"/></td><td></td></tr>
+                  	<tr style="border:none;font-size:12px;"><td colspan="3" style="color:red;">为保证显示效果,强烈建议上传30*30大小的图片</td></tr>
                   	</table>
               </div>
           </div>

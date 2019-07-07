@@ -32,6 +32,14 @@
     <form class="layui-form layui-col-md12 x-so" method="post" action="<%=request.getContextPath()%>/prizeitems/listPage">
       <div class="layui-row">
           <input type="text" name="keywords"  placeholder="请输入关键字" autocomplete="off" class="layui-input" value="${page.pd.keywords}">
+          <div class="layui-input-inline">
+          <select id="HANDERTYPE_ID" name="HANDERTYPE_ID" class="valid">
+          	<option value="">所属处理类型</option>
+            <c:forEach var="ht" items="${handertypeData}">
+            	<option value="${ht.HANDERTYPE_ID}" <c:if test="${ht.HANDERTYPE_ID eq page.pd.HANDERTYPE_ID}">selected="selected"</c:if>>${ht.DESCRIPTION}</option>
+            </c:forEach>
+          </select>
+          </div>
           <button class="layui-btn"  lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i>搜索</button>
         
       </div>
@@ -51,7 +59,7 @@
         <tbody>
           <c:forEach var="var" items="${page.data}">
           	<tr>
-           	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.IMAGE_PATH}" alt="图片" width="100"/></td>
+           	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.IMAGE_PATH}" alt="图片" width="50"/></td>
             <td>${var.DESCRIPTION}</td>
             <td>${var.SAMEMONEY}</td>
             <td>${var.CREATE_TIME}</td>

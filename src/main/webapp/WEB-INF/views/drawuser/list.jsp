@@ -67,7 +67,7 @@
           <c:forEach var="var" items="${page.data}">
           	<tr>
           	<td>${var.TOPIC}</td>
-           	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.IMAGE_PATH}" alt="图片" width="100"/></td>
+           	<td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${var.IMAGE_PATH}" alt="图片" width="50"/></td>
             <td>${var.DESCRIPTION}</td>
             <td>${var.CREATE_TIME}</td>
             <td>${var.OPENID}</td>
