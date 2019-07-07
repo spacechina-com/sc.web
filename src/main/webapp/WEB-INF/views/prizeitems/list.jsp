@@ -53,6 +53,7 @@
             <th>描述</th>
             <th>等值</th>
             <th>创建时间</th>
+            <th>处理类型</th>
             <th>操作</th>
             </tr>
         </thead>
@@ -63,6 +64,7 @@
             <td>${var.DESCRIPTION}</td>
             <td>${var.SAMEMONEY}</td>
             <td>${var.CREATE_TIME}</td>
+            <td>${var.HDESCRIPTION}</td>
             <td class="td-manage">
               <a title="编辑" class="layui-btn layui-btn-warm"  onclick="commonEdit('<%=request.getContextPath()%>/prizeitems/goEdit?PRIZEITEMS_ID=${var.PRIZEITEMS_ID}')" href="javascript:;">
                 <i class="layui-icon">&#xe642;</i>编辑
