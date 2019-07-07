@@ -134,12 +134,17 @@
                   	产品批次
               </label>
               <div class="layui-input-inline">
-                  <select id="BATCH_ID" name="BATCH_ID" class="valid" disabled="disabled">
+                 <input type="hidden" id="BATCH_ID" name="BATCH_ID" value="${IDS}"/>
+              		<input type="text" id="BATCH_ID_NAME" lay-verify="nikenamewds"
+                  autocomplete="off" class="layui-input" onclick="checkBatch();"  value="${NAMES}" disabled="disabled"/>
+              <!-- 
+                  <select id="BATCH_ID" name="BATCH_ID" class="valid">
                   	<option value="">请选择</option>
                     <c:forEach var="b" items="${batchsData}">
                     	<option value="${b.BATCH_ID}">${b.BATCHNAME}</option>
                     </c:forEach>
                   </select>
+               -->
               </div>
           </div>
            <div class="layui-form-item">

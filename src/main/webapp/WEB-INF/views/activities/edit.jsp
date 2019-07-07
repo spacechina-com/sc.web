@@ -135,12 +135,17 @@
                   	产品批次
               </label>
               <div class="layui-input-inline">
+              <input type="hidden" id="BATCH_ID" name="BATCH_ID" value="${IDS}"/>
+              		<input type="text" id="BATCH_ID_NAME" lay-verify="nikenamewds"
+                  autocomplete="off" class="layui-input" onclick="checkBatch();"  value="${NAMES}"/>
+              <!-- 
                   <select id="BATCH_ID" name="BATCH_ID" class="valid">
                   	<option value="">请选择</option>
                     <c:forEach var="b" items="${batchsData}">
                     	<option value="${b.BATCH_ID}">${b.BATCHNAME}</option>
                     </c:forEach>
                   </select>
+               -->
               </div>
           </div>
            <div class="layui-form-item">
@@ -241,35 +246,6 @@
             });
           });
         
-        
-        $.ajax({
-			type: "POST",
-			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
-	    	data:{
-	    		"GOODS_ID":"${pd.GOODS_ID}"
-	    	},
-	    	async: false,
-			dataType:'json',
-			cache: false,
-			beforeSend:function(){
-				
-			},
-			success: function(data){
-				var list = data.data;
-				$.each(list,function(index,value){ 
-					var sl = "";
-					if(value.BATCH_ID == "${pd.BATCH_ID}"){
-						sl = "selected='selected'";
-					}
-					$("#BATCH_ID").append("<option value='"+value.BATCH_ID+"' "+sl+">"+value.BATCHNAME+"</option>");
-				});
-				form.render();
-			},
-			error:function(){
-				
-			}
-		});
-        
         function showImg(obj){
         	var imageSrc = window.URL?window.URL.createObjectURL(obj.files[0]):obj.value;
         	$("#"+$(obj).attr("lt"))[0].src=imageSrc;
@@ -340,7 +316,8 @@
         });
         
         function checkCondition(){
-        	if($("input[name='PRIZEITEMS_ID_PERCENT']").length==0){
+        	//$("input[name='PRIZEITEMS_ID_PERCENT']").length==0 || 
+        	if($("#tbd").find("tr").length==0){
         		layer.alert("该活动暂无关联的奖品,请完善奖品信息栏位.");
         		return false;
         	}
@@ -372,6 +349,83 @@
             });
         }
         
+        var IDS = "${IDS}";
+        var NAMES = "${NAMES}";
+        
+        
+        function checkBatch(){
+        	if(!$("#goods").val()){
+        		layer.alert("请先选择关联产品")
+        		return;
+        	}else{
+	        	$.ajax({
+	    			type: "POST",
+	    			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
+	    	    	data:{
+	    	    		"GOODS_ID":$("#goods").val()
+	    	    	},
+	    	    	async: false,
+	    			dataType:'json',
+	    			cache: false,
+	    			beforeSend:function(){
+	    				
+	    			},
+	    			success: function(data){
+						var list = data.data;
+	    				var htmlgb = "<table class='layui-table' id='batchTable'>";
+	    				$.each(list,function(index,value){
+	    					var checkflag= "";
+	    		    		if(IDS.indexOf(value.BATCH_ID+'') >= 0){
+	    		    			checkflag = "checked='checked'";
+	    		    		}
+	    					htmlgb+="<tr><td>"+value.BATCHNAME+"</td><td><input type='checkbox' style='width:30px;' "+checkflag+" value='"+value.BATCH_ID+"' ln='"+value.BATCHNAME+"'/></td></tr>";
+	    				});
+	    				htmlgb += "</table>";
+	    				layer.open({
+	    		           	  title:'选择关联产品的批次信息',
+	    		           	  area: ['600px', '400px'],
+	    		           	  content: '<div>'+htmlgb+'</div>'
+	    		           	  ,btn: ['确认', '取消']
+	    		           	  ,yes: function(index, layero){
+	    		    				
+   		    				  IDS = "";
+   		    		          NAMES = "";
+   		    		          
+	   		    		      $("#batchTable").find("input[type='checkbox']").each(function(){
+	   		        	    	if($(this).is(':checked')){
+	   		        	    		IDS+=$(this).val()+',';
+	   		        	    		NAMES+=$(this).attr("ln")+',';
+	   		        	    	}
+	   		        	     });
+   		        	    
+   		        	    if(IDS.length > 0){
+   		        	    	IDS = IDS.substr(0,IDS.length-1);
+   		        	    	NAMES = NAMES.substr(0,NAMES.length-1).replace(/,/g,"  ,  ");
+   		        	    }
+   		        	    
+   		        		$("#BATCH_ID").val(IDS);
+   		        	    
+   		        	    $("#BATCH_ID_NAME").val(NAMES);
+	    		    		        
+	    		    				
+	    		           		layer.close(index);
+	    		           	  }
+	    		           	  ,btn2: function(index, layero){
+	    		           	    //按钮【按钮二】的回调
+	    		           	    //return false 开启该代码可禁止点击该按钮关闭
+	    		           	  }
+	    		           	  ,cancel: function(){
+	    		           	    //右上角关闭回调
+	    		           	    //return false 开启该代码可禁止点击该按钮关闭
+	    		           	  }
+	    		        });
+	    			},
+	    			error:function(){
+	    				
+	    			}
+	    		});
+        	}
+        }
     </script>
   </body>
 

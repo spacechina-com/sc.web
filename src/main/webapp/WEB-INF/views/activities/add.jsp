@@ -294,9 +294,12 @@
         	return true;
         }
         
+        var IDS = "";
+        var NAMES = "";
+        
         
         function checkBatch(){
-        	if(!$("#GOODS_ID").val()){
+        	if(!$("#goods").val()){
         		layer.alert("请先选择关联产品")
         		return;
         	}else{
@@ -304,7 +307,7 @@
 	    			type: "POST",
 	    			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
 	    	    	data:{
-	    	    		"GOODS_ID":$("#GOODS_ID").val()
+	    	    		"GOODS_ID":$("#goods").val()
 	    	    	},
 	    	    	async: false,
 	    			dataType:'json',
@@ -313,7 +316,54 @@
 	    				
 	    			},
 	    			success: function(data){
-	    				
+						var list = data.data;
+	    				var htmlgb = "<table class='layui-table' id='batchTable'>";
+	    				$.each(list,function(index,value){
+	    					var checkflag= "";
+	    		    		if(IDS.indexOf(value.BATCH_ID+'') >= 0){
+	    		    			checkflag = "checked='checked'";
+	    		    		}
+	    					htmlgb+="<tr><td>"+value.BATCHNAME+"</td><td><input type='checkbox' style='width:30px;' "+checkflag+" value='"+value.BATCH_ID+"' ln='"+value.BATCHNAME+"'/></td></tr>";
+	    				});
+	    				htmlgb += "</table>";
+	    				layer.open({
+	    		           	  title:'选择关联产品的批次信息',
+	    		           	  area: ['600px', '400px'],
+	    		           	  content: '<div>'+htmlgb+'</div>'
+	    		           	  ,btn: ['确认', '取消']
+	    		           	  ,yes: function(index, layero){
+	    		    				
+   		    				  IDS = "";
+   		    		          NAMES = "";
+   		    		          
+	   		    		      $("#batchTable").find("input[type='checkbox']").each(function(){
+	   		        	    	if($(this).is(':checked')){
+	   		        	    		IDS+=$(this).val()+',';
+	   		        	    		NAMES+=$(this).attr("ln")+',';
+	   		        	    	}
+	   		        	     });
+   		        	    
+   		        	    if(IDS.length > 0){
+   		        	    	IDS = IDS.substr(0,IDS.length-1);
+   		        	    	NAMES = NAMES.substr(0,NAMES.length-1).replace(/,/g,"  ,  ");
+   		        	    }
+   		        	    
+   		        		$("#BATCH_ID").val(IDS);
+   		        	    
+   		        	    $("#BATCH_ID_NAME").val(NAMES);
+	    		    		        
+	    		    				
+	    		           		layer.close(index);
+	    		           	  }
+	    		           	  ,btn2: function(index, layero){
+	    		           	    //按钮【按钮二】的回调
+	    		           	    //return false 开启该代码可禁止点击该按钮关闭
+	    		           	  }
+	    		           	  ,cancel: function(){
+	    		           	    //右上角关闭回调
+	    		           	    //return false 开启该代码可禁止点击该按钮关闭
+	    		           	  }
+	    		        });
 	    			},
 	    			error:function(){
 	    				

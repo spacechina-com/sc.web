@@ -77,6 +77,7 @@ public class ActivitiesController extends BaseController {
 		}
 
 		String[] ACTIVITIES_PRIZEITEMS = pd.getString("PRIZEITEMS_ID_PERCENT").split(",");
+		String BATCH_ID = pd.getString("BATCH_ID");
 
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/save", pd, Pd.class);
 
@@ -87,6 +88,16 @@ public class ActivitiesController extends BaseController {
 			pdpi.put("PRIZEITEMS_ID", one[0]);
 			pdpi.put("PERCENT", one[1]);
 			rest.post(IConstants.SC_SERVICE_KEY, "activities/savePrizeitems", pdpi, Pd.class);
+		}
+
+		if (StringUtils.isNotEmpty(BATCH_ID)) {
+			String[] BATCH_IDS = BATCH_ID.split(",");
+			for (String batcId : BATCH_IDS) {
+				Pd pdgb = new Pd();
+				pdgb.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+				pdgb.put("BATCH_ID", batcId);
+				rest.post(IConstants.SC_SERVICE_KEY, "activities/saveBatchs", pdgb, Pd.class);
+			}
 		}
 
 		mv.addObject("msg", getMessageUrl("MSG_CODE_ADD_SUCCESS", new Object[] { "抽奖活动" }, ""));
@@ -150,17 +161,40 @@ public class ActivitiesController extends BaseController {
 			}
 		}
 
-		String[] ACTIVITIES_PRIZEITEMS = pd.getString("PRIZEITEMS_ID_PERCENT").split(",");
+		String ACTIVITIES_PRIZEITEM = pd.getString("PRIZEITEMS_ID_PERCENT");
+		String BATCH_ID = pd.getString("BATCH_ID");
 
 		rest.post(IConstants.SC_SERVICE_KEY, "activities/edit", pd, Pd.class);
 
-		for (int i = 0; i < ACTIVITIES_PRIZEITEMS.length; i++) {
-			String[] one = ACTIVITIES_PRIZEITEMS[i].split("_");
-			Pd pdpi = new Pd();
-			pdpi.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
-			pdpi.put("PRIZEITEMS_ID", one[0]);
-			pdpi.put("PERCENT", one[1]);
-			rest.post(IConstants.SC_SERVICE_KEY, "activities/savePrizeitems", pdpi, Pd.class);
+		if (StringUtils.isNotEmpty(ACTIVITIES_PRIZEITEM)) {
+			String[] ACTIVITIES_PRIZEITEMS = ACTIVITIES_PRIZEITEM.split(",");
+			for (int i = 0; i < ACTIVITIES_PRIZEITEMS.length; i++) {
+				String[] one = ACTIVITIES_PRIZEITEMS[i].split("_");
+				Pd pdpi = new Pd();
+				pdpi.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+				pdpi.put("PRIZEITEMS_ID", one[0]);
+				pdpi.put("PERCENT", one[1]);
+				rest.post(IConstants.SC_SERVICE_KEY, "activities/savePrizeitems", pdpi, Pd.class);
+			}
+		}
+
+		Pd pdmm = new Pd();
+		pdmm.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+		List<Pd> bData = rest.postForList(IConstants.SC_SERVICE_KEY, "activities/listAllBatchs", pdmm,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		for (Pd pageData : bData) {
+			rest.post(IConstants.SC_SERVICE_KEY, "activities/deleteBatchs", pageData, Pd.class);
+		}
+
+		if (StringUtils.isNotEmpty(BATCH_ID)) {
+			String[] BATCH_IDS = BATCH_ID.split(",");
+			for (String batcId : BATCH_IDS) {
+				Pd pdgb = new Pd();
+				pdgb.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+				pdgb.put("BATCH_ID", batcId);
+				rest.post(IConstants.SC_SERVICE_KEY, "activities/saveBatchs", pdgb, Pd.class);
+			}
 		}
 
 		mv.addObject("msg", getMessageUrl("MSG_CODE_EDIT_SUCCESS", new Object[] { "抽奖活动" }, ""));
@@ -279,6 +313,24 @@ public class ActivitiesController extends BaseController {
 				});
 		mv.addObject("activitiesprizeitemsData", activitiesprizeitemsData);
 
+		Pd pdmm = new Pd();
+		pdmm.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+		List<Pd> bData = rest.postForList(IConstants.SC_SERVICE_KEY, "activities/listAllBatchs", pdmm,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		String IDS = "";
+		String NAMES = "";
+		for (Pd pageData : bData) {
+			if (IDS.length() > 0) {
+				IDS += ",";
+				NAMES += "  ,  ";
+			}
+			IDS += pageData.getString("BATCH_ID");
+			NAMES += pageData.getString("BATCHNAME");
+		}
+		mv.addObject("IDS", IDS);
+		mv.addObject("NAMES", NAMES);
+
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
 
@@ -320,6 +372,24 @@ public class ActivitiesController extends BaseController {
 				pdap, new ParameterizedTypeReference<List<Pd>>() {
 				});
 		mv.addObject("activitiesprizeitemsData", activitiesprizeitemsData);
+
+		Pd pdmm = new Pd();
+		pdmm.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+		List<Pd> bData = rest.postForList(IConstants.SC_SERVICE_KEY, "activities/listAllBatchs", pdmm,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		String IDS = "";
+		String NAMES = "";
+		for (Pd pageData : bData) {
+			if (IDS.length() > 0) {
+				IDS += ",";
+				NAMES += "  ,  ";
+			}
+			IDS += pageData.getString("BATCH_ID");
+			NAMES += pageData.getString("BATCHNAME");
+		}
+		mv.addObject("IDS", IDS);
+		mv.addObject("NAMES", NAMES);
 
 		pd = rest.post(IConstants.SC_SERVICE_KEY, "activities/find", pd, Pd.class);
 		mv.addObject("pd", pd); // 放入视图容器
