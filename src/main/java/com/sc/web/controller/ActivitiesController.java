@@ -402,12 +402,8 @@ public class ActivitiesController extends BaseController {
 	@ResponseBody
 	public ReturnModel findGoodsBatchs() throws Exception {
 		ReturnModel rm = new ReturnModel();
-
-		Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
-
 		Pd pd = new Pd();
 		pd = this.getPd();
-		pd.put("COMPANY_ID", user.getString("COMPANY_ID"));
 		List<Pd> batchsData = rest.postForList(IConstants.SC_SERVICE_KEY, "common/listAllGoodsBatch", pd,
 				new ParameterizedTypeReference<List<Pd>>() {
 				});
