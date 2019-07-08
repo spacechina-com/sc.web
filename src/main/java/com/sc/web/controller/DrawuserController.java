@@ -116,6 +116,10 @@ public class DrawuserController extends BaseController {
 			pd.put("keywords", keywords.trim());
 		}
 
+		Pd user = (Pd) getSession().getAttribute(IConstants.USER_SESSION);
+
+		pd.put("COMPANY_ID", user.getString("COMPANY_ID"));
+
 		Page page = rest.post(IConstants.SC_SERVICE_KEY, "drawuser/listPage", pd, Page.class);
 
 		mv.setViewName("/drawuser/list");
