@@ -374,7 +374,7 @@ xblock{
     position: absolute;
     top: 46px;
     right: 0;
-    bottom: 42px;
+    bottom: 0px;
     left: 181px;
     overflow: hidden;
     z-index: 1;
