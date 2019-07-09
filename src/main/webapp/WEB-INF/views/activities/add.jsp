@@ -200,6 +200,8 @@
           form.on('select(goods)', function(data){
             		$("#BATCH_ID").val('');
             		$("#BATCH_ID_NAME").val('');
+            		IDS = "";
+                    NAMES = "";
         });
         
         layui.use('laydate', function(){

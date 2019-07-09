@@ -200,35 +200,11 @@
           });
           
           form.on('select(goods)', function(data){
-          	if(data.value == ''){
-            		$("#BATCH_ID").html("<option value=''>请选择</option>");
-            		form.render();
-            	}else{
-            		$.ajax({
-            			type: "POST",
-            			url: '<%=request.getContextPath()%>/activities/findGoodsBatchs',
-            	    	data:{
-            	    		"GOODS_ID":data.value
-            	    	},
-            	    	async: false,
-            			dataType:'json',
-            			cache: false,
-            			beforeSend:function(){
-            				
-            			},
-            			success: function(data){
-            				var list = data.data;
-            				$.each(list,function(index,value){ 
-            					$("#BATCH_ID").append("<option value='"+value.BATCH_ID+"'>"+value.BATCHNAME+"</option>");
-            				});
-            				form.render();
-            			},
-            			error:function(){
-            				
-            			}
-            		});
-            	}
-            });
+      		$("#BATCH_ID").val('');
+      		$("#BATCH_ID_NAME").val('');
+      		  IDS = "";
+              NAMES = "";
+  			});
           
         });
         
