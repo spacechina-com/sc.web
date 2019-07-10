@@ -9,4 +9,7 @@
 <body>
 403
 </body>
+<script type="text/javascript">
+window.top.reload();
+</script>
 </html>
