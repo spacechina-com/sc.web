@@ -67,6 +67,15 @@
           </div>
           <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">
+                  	单码人数限制
+              </label>
+              <div class="layui-input-inline">
+                  <input type="text" id="L_username143s" name="PEOPLE_LIMIT" lay-verify="nikenamewAsa"
+                  autocomplete="off" class="layui-input">
+              </div>
+          </div>
+          <div class="layui-form-item">
+              <label for="L_username" class="layui-form-label">
                   	单人抽奖次数
               </label>
               <div class="layui-input-inline">
