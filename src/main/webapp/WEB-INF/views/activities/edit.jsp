@@ -314,7 +314,18 @@
         		layer.alert("该活动暂无关联的奖品,请完善奖品信息栏位.");
         		return false;
         	}
-        	return true;
+        	
+        	var sum = 0;
+        	$("#tbd").find("tr").each(function(){
+        		sum += parseInt($(this).children('td').eq(2).text())
+        	});
+        	
+        	if(sum>1000){
+        		layer.alert("所有奖品中奖率之和不能大于1000,请正确设置每个奖品中奖率.");
+        		return false;
+        	}else{
+        		return true;
+        	}
         }
         
         function deleteAP(id){

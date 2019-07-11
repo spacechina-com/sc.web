@@ -310,7 +310,18 @@
         		layer.alert("该活动暂无关联的奖品,请完善奖品信息栏位.");
         		return false;
         	}
-        	return true;
+
+        	var sum = 0;
+        	$("input[name='PRIZEITEMS_ID_PERCENT']").each(function(){
+        		sum += parseInt($(this).val().split("_")[1])
+        	});
+        	
+        	if(sum>1000){
+        		layer.alert("所有奖品中奖率之和不能大于1000,请正确设置每个奖品中奖率.");
+        		return false;
+        	}else{
+        		return true;
+        	}
         }
         
         var IDS = "";
