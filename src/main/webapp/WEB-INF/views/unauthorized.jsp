@@ -10,6 +10,6 @@
 403
 </body>
 <script type="text/javascript">
-window.top.reload();
+window.top.location.reload();
 </script>
 </html>
