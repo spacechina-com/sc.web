@@ -79,6 +79,7 @@
               	<c:when test="${var.STATE eq 0}"><a href="javascript:;" class="layui-btn layui-btn-normal" onclick="doHander('${var.DRAWUSER_ID}','${var.OPENID}','${var.HANDERTYPE_ID}','${var.SAMEMONEY}','${var.REALNAME}','${var.PHONE}','${var.ADDRESSDETIAL}')">未处理</a></c:when>
               	<c:otherwise>未知</c:otherwise>
               </c:choose>
+              <c:if test="${var.EXPRESSNO ne null}"><a href="javascript:;" class="layui-btn layui-btn-danger" disabled="disabled">单号:${var.EXPRESSNO}</a></c:if>
             </td>
           </tr>
           </c:forEach>
