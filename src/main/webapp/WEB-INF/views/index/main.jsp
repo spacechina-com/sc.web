@@ -32,7 +32,7 @@
         </div>
         <ul class="layui-nav right" lay-filter="">
           <li class="layui-nav-item" style="font-size:14px;">
-           		 你好：${USER_SESSION.USERNAME} 管理员
+           		${USER_SESSION.USERNAME} 管理员
           </li>
         </ul>
         
