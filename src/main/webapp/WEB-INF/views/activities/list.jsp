@@ -53,6 +53,7 @@
             <th>主题</th>
             <th>描述</th>
             <th>分类</th>
+            <th>关联产品</th>
             <th>开始 / 结束时间</th>
             <th>操作</th>
             </tr>
@@ -64,6 +65,7 @@
             <td>${var.TOPIC}</td>
             <td>${var.DESCRIPTION}</td>
             <td>${var.MDESCRIPTION}</td>
+            <td>${var.NAME}</td>
             <td>${var.START_TIME} / ${var.END_TIME}</td>
             <td class="td-manage">
               <a title="编辑" class="layui-btn layui-btn-warm"  onclick="commonEdit('<%=request.getContextPath()%>/activities/goEdit?ACTIVITIES_ID=${var.ACTIVITIES_ID}')" href="javascript:;">
