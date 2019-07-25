@@ -166,6 +166,15 @@ public class ActivitiesController extends BaseController {
 
 		rest.post(IConstants.SC_SERVICE_KEY, "activities/edit", pd, Pd.class);
 
+		Pd pdap = new Pd();
+		pdap.put("ACTIVITIES_ID", pd.getString("ACTIVITIES_ID"));
+		List<Pd> apData = rest.postForList(IConstants.SC_SERVICE_KEY, "activities/listAllPrizeitems", pdap,
+				new ParameterizedTypeReference<List<Pd>>() {
+				});
+		for (Pd pageData : apData) {
+			rest.post(IConstants.SC_SERVICE_KEY, "activities/deletePrizeitems", pageData, Pd.class);
+		}
+
 		if (StringUtils.isNotEmpty(ACTIVITIES_PRIZEITEM)) {
 			String[] ACTIVITIES_PRIZEITEMS = ACTIVITIES_PRIZEITEM.split(",");
 			for (int i = 0; i < ACTIVITIES_PRIZEITEMS.length; i++) {

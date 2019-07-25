@@ -67,7 +67,7 @@
                   <span class="x-red">*</span>等值
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username14" name="SAMEMONEY" required="" lay-verify="nikenamew"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username14" name="SAMEMONEY" required="" lay-verify="nikenamew"
                   autocomplete="off" class="layui-input" value="${pd.SAMEMONEY}">
               </div>
           </div>

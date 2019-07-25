@@ -42,6 +42,7 @@
     </div>
     <div class="x-body">
         <form enctype="multipart/form-data" class="layui-form" method="post" action="<%=request.getContextPath()%>/activities/save" onsubmit="return checkCondition();">
+          <input type="hidden" name="PRIZEITEMS_ID_PERCENT" id="PRIZEITEMS_ID_PERCENT"/>
           <div class="layui-form-item">
               <label for="username" class="layui-form-label">
                   <span class="x-red">*</span>所属类型
@@ -70,7 +71,7 @@
                   	单码人数限制
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username143s" name="PEOPLE_LIMIT" lay-verify="nikenamewAsa"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username143s" name="PEOPLE_LIMIT" lay-verify="nikenamewAsa"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -79,7 +80,7 @@
                   	单人抽奖次数
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -88,7 +89,7 @@
                   	单人日抽奖次数
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username143" name="DAY_LIMIT" lay-verify="nikenamewAsd"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username143" name="DAY_LIMIT" lay-verify="nikenamewAsd"
                   autocomplete="off" class="layui-input">
               </div>
           </div>
@@ -248,7 +249,7 @@
        		<c:forEach var="pi" items="${prizeitemsData}">
        		htmlgp+="<option value='${pi.PRIZEITEMS_ID}' lt='${pi.IMAGE_PATH}'>${pi.DESCRIPTION}</option>";
             </c:forEach>
-            htmlgp+="</select></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;'><input id='PRIZEITEMS_ID_PERCENT_TEMP' class='layui-input' placeholder='商品中奖率'/></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;color:red;'>友情提示:中奖率基数为1000.</div></div>";
+            htmlgp+="</select></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;'><input id='PRIZEITEMS_ID_PERCENT_TEMP' oninput='value=value.replace(/[^0-9]/g,\"\")' class='layui-input' placeholder='商品中奖率'/></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;color:red;'>友情提示:中奖率基数为1000.</div></div>";
        		layer.open({
            	  title:'选择奖品及设置中奖率',
            	  area: ['600px', '400px'],
@@ -284,7 +285,7 @@
            			var iname = $("#PRIZEITEMS_ID_TEMP").find("option:selected").text();
            			var path = $("#PRIZEITEMS_ID_TEMP").find("option:selected").attr("lt");
            			var ipercent = $("#PRIZEITEMS_ID_PERCENT_TEMP").val();
-           			$("#tbd").append(`<tr><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=`+path+`" alt="图片" width="80"/></td><td><input type="hidden" name="PRIZEITEMS_ID_PERCENT" value="`+iid+`_`+ipercent+`"/>`+iname+`</td><td>`+ipercent+`</td><td align="center"><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>`);
+           			$("#tbd").append(`<tr><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=`+path+`" alt="图片" width="80"/></td><td>`+iname+`</td><td><input oninput="value=value.replace(/[^0-9]/g,'')" type='text' lt='`+iid+`' class='layui-input' value='`+ipercent+`'/></td><td align="center"><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>`);
                 	$(".delete").click(function(){
                     	$(this).parent().parent().remove();
                     });
@@ -308,15 +309,32 @@
         });
         
         function checkCondition(){
-        	if($("input[name='PRIZEITEMS_ID_PERCENT']").length==0){
+        	if($("#tbd").find("tr").length==0){
         		layer.alert("该活动暂无关联的奖品,请完善奖品信息栏位.");
         		return false;
         	}
 
         	var sum = 0;
-        	$("input[name='PRIZEITEMS_ID_PERCENT']").each(function(){
-        		sum += parseInt($(this).val().split("_")[1])
+        	//$("input[name='PRIZEITEMS_ID_PERCENT']").each(function(){
+        	//	sum += parseInt($(this).val().split("_")[1])
+        	//});
+        	
+        	var PRIZEITEMS_ID_PERCENT_VAL="";
+        	
+        	$("#tbd").find("input[type='text']").each(function(){
+        		var tv = $(this).val();
+        		if(tv==""){
+        			tv = "0";
+        			$(this).val(tv);
+        		}
+        		sum += parseInt(tv);
+        		if(PRIZEITEMS_ID_PERCENT_VAL!=""){
+        			PRIZEITEMS_ID_PERCENT_VAL+=",";
+        		}
+        		PRIZEITEMS_ID_PERCENT_VAL+=$(this).attr("lt")+"_"+tv;
         	});
+        	
+        	$("#PRIZEITEMS_ID_PERCENT").val(PRIZEITEMS_ID_PERCENT_VAL);
         	
         	if(sum>1000){
         		layer.alert("所有奖品中奖率之和不能大于1000,请正确设置每个奖品中奖率.");

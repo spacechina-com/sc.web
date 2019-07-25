@@ -43,6 +43,7 @@
     <div class="x-body">
         <form enctype="multipart/form-data" class="layui-form" method="post" action="<%=request.getContextPath()%>/activities/edit" onsubmit="return checkCondition();">
           <input type="hidden" name="ACTIVITIES_ID" value="${pd.ACTIVITIES_ID}"/>
+          <input type="hidden" name="PRIZEITEMS_ID_PERCENT" id="PRIZEITEMS_ID_PERCENT"/>
           <div class="layui-form-item">
               <label for="username" class="layui-form-label">
                   <span class="x-red">*</span>所属类型
@@ -71,7 +72,7 @@
                   	单码人数限制
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username143s" name="PEOPLE_LIMIT" lay-verify="nikenamewAsa"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username143s" name="PEOPLE_LIMIT" lay-verify="nikenamewAsa"
                   autocomplete="off" class="layui-input" value="${pd.PEOPLE_LIMIT}">
               </div>
           </div>
@@ -80,7 +81,7 @@
                   	单人抽奖次数
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username143" name="SINGLE_LIMIT" lay-verify="nikenamewAs"
                   autocomplete="off" class="layui-input" value="${pd.SINGLE_LIMIT}">
               </div>
           </div>
@@ -89,7 +90,7 @@
                   	单人日抽奖次数
               </label>
               <div class="layui-input-inline">
-                  <input type="text" id="L_username143" name="DAY_LIMIT" lay-verify="nikenamewAsd"
+                  <input type="text" oninput="value=value.replace(/[^0-9]/g,'')" id="L_username143" name="DAY_LIMIT" lay-verify="nikenamewAsd"
                   autocomplete="off" class="layui-input" value="${pd.DAY_LIMIT}">
               </div>
           </div>
@@ -167,7 +168,7 @@
                   		<tr class="thd"><td>奖品图片</td><td>奖品名称</td><td>中奖率</td><td>操作</td></tr>
                   		<tbody id="tbd">
 							<c:forEach var="ap" items="${activitiesprizeitemsData}">
-								<tr class="thd" id="edit_${ap.ACTIVITIES_PRIZEITEMS_ID}"><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${ap.IMAGE_PATH}" alt="图片" width="80"/></td><td>${ap.DESCRIPTION}</td><td>${ap.PERCENT}</td><td align="center"><button class="layui-btn layui-btn-primary" type="button" onclick="deleteAP('${ap.ACTIVITIES_PRIZEITEMS_ID}')">删除</button></td></tr>
+								<tr class="thd" id="edit_${ap.ACTIVITIES_PRIZEITEMS_ID}"><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=${ap.IMAGE_PATH}" alt="图片" width="80"/></td><td>${ap.DESCRIPTION}</td><td><input oninput="value=value.replace(/[^0-9]/g,'')" type='text' lt='${ap.PRIZEITEMS_ID}' class='layui-input' value='${ap.PERCENT}'/></td><td align="center"><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>
 							</c:forEach>
                   		</tbody>
                   	</table>
@@ -251,7 +252,7 @@
        		<c:forEach var="pi" items="${prizeitemsData}">
        		htmlgp+="<option value='${pi.PRIZEITEMS_ID}' lt='${pi.IMAGE_PATH}'>${pi.DESCRIPTION}</option>";
             </c:forEach>
-            htmlgp+="</select></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;'><input id='PRIZEITEMS_ID_PERCENT_TEMP' class='layui-input' placeholder='商品中奖率'/></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;color:red;'>友情提示:中奖率基数为1000.</div></div>";
+            htmlgp+="</select></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;'><input id='PRIZEITEMS_ID_PERCENT_TEMP' oninput='value=value.replace(/[^0-9]/g,\"\")' class='layui-input' placeholder='商品中奖率'/></div></div><div class='layui-form-item'><div class='layui-input-inline' style='width:100%;color:red;'>友情提示:中奖率基数为1000.</div></div>";
        		layer.open({
            	  title:'选择奖品及设置中奖率',
            	  area: ['600px', '400px'],
@@ -287,7 +288,7 @@
            			var iname = $("#PRIZEITEMS_ID_TEMP").find("option:selected").text();
            			var path = $("#PRIZEITEMS_ID_TEMP").find("option:selected").attr("lt");
            			var ipercent = $("#PRIZEITEMS_ID_PERCENT_TEMP").val();
-           			$("#tbd").append(`<tr><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=`+path+`" alt="图片" width="80"/></td><td><input type="hidden" name="PRIZEITEMS_ID_PERCENT" value="`+iid+`_`+ipercent+`"/>`+iname+`</td><td>`+ipercent+`</td><td align="center"><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>`);
+           			$("#tbd").append(`<tr><td><img src="<%=request.getContextPath()%>/file/image?FILENAME=`+path+`" alt="图片" width="80"/></td><td>`+iname+`</td><td><input oninput="value=value.replace(/[^0-9]/g,'')" type='text' lt='`+iid+`' class='layui-input' value='`+ipercent+`'></td><td align="center"><button class="layui-btn layui-btn-primary delete" type="button">删除</button></td></tr>`);
                 	$(".delete").click(function(){
                     	$(this).parent().parent().remove();
                     });
@@ -318,9 +319,26 @@
         	}
         	
         	var sum = 0;
-        	$("#tbd").find("tr").each(function(){
-        		sum += parseInt($(this).children('td').eq(2).text())
+        	//$("#tbd").find("tr").each(function(){
+        	//	sum += parseInt($(this).children('td').eq(2).text())
+        	//});
+        	
+        	var PRIZEITEMS_ID_PERCENT_VAL="";
+        	
+        	$("#tbd").find("input[type='text']").each(function(){
+        		var tv = $(this).val();
+        		if(tv==""){
+        			tv = "0";
+        			$(this).val(tv);
+        		}
+        		sum += parseInt(tv);
+        		if(PRIZEITEMS_ID_PERCENT_VAL!=""){
+        			PRIZEITEMS_ID_PERCENT_VAL+=",";
+        		}
+        		PRIZEITEMS_ID_PERCENT_VAL+=$(this).attr("lt")+"_"+tv;
         	});
+        	
+        	$("#PRIZEITEMS_ID_PERCENT").val(PRIZEITEMS_ID_PERCENT_VAL);
         	
         	if(sum>1000){
         		layer.alert("所有奖品中奖率之和不能大于1000,请正确设置每个奖品中奖率.");
