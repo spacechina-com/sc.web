@@ -97,7 +97,7 @@
               <label for="L_repass" class="layui-form-label">
               </label>
               <button  class="layui-btn" lay-filter="add" lay-submit="" type="submit">
-                  增加
+                   确认
               </button>
           </div>
       </form>

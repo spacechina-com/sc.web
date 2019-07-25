@@ -55,7 +55,7 @@
           <tr>
           	<th>所属抽奖</th>
             <th>奖品图片</th>
-            <th>描述</th>
+            <th>奖品名称</th>
             <th>抽奖时间</th>
             <th>OPENID</th>
             <th>昵称</th>
