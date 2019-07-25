@@ -179,6 +179,34 @@
 			}
 		});
     }
+	
+	function handerCommon(did){
+		$.ajax({
+			type: "POST",
+			url: '<%=request.getContextPath()%>/drawuser/other',
+	    	data:{
+	    		"DRAWUSER_ID":did
+	    	},
+	    	async: false,
+			dataType:'json',
+			cache: false,
+			beforeSend:function(){
+				
+			},
+			success: function(data){
+				if(data.flag){
+					layer.alert("抽奖已处理成功",function(){
+						location.reload();
+					});
+				}else{
+					layer.alert(data.message);
+				}
+			},
+			error:function(){
+				
+			}
+		});
+    }
     
     function doHander(did,oid,tid,sm,name,phone,address){
     	if(tid == '1'){
@@ -227,8 +255,10 @@
     		}
     		
     	} else if(tid == '4'){
-    		layer.alert("系统待完善该类型处理");
-    		return;
+    		layer.confirm("确处理该抽奖记录 ?",function(index){
+    			handerCommon(did)
+        		layer.close(index);
+            });
     	}else{
     		layer.alert("暂不支持该类型处理");
     		return;

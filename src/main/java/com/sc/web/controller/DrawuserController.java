@@ -228,6 +228,20 @@ public class DrawuserController extends BaseController {
 		return rm;
 	}
 
+	@RequestMapping(value = "/other")
+	@ResponseBody
+	public ReturnModel other() throws Exception {
+		ReturnModel rm = new ReturnModel();
+		Pd pd = new Pd();
+		pd = this.getPd();
+
+		Pd pdd = rest.post(IConstants.SC_SERVICE_KEY, "drawuser/find", pd, Pd.class);
+		pdd.put("STATE", IConstants.STRING_1);
+		rest.post(IConstants.SC_SERVICE_KEY, "drawuser/edit", pdd, Pd.class);
+
+		return rm;
+	}
+
 	@RequestMapping(value = "/money")
 	@ResponseBody
 	public ReturnModel money() {
